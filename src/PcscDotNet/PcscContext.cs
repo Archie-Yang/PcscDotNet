@@ -12,6 +12,8 @@ namespace PcscDotNet
 
         public bool IsDisposed { get; private set; } = false;
 
+        public bool IsEstablished => _context.HasValue;
+
         public Pcsc Pcsc => _pcsc;
 
         public PcscContext(Pcsc pcsc)
@@ -34,6 +36,7 @@ namespace PcscDotNet
         public unsafe PcscContext Establish(SCardScope scope)
         {
             if (IsDisposed) throw new ObjectDisposedException(nameof(PcscContext), nameof(Establish));
+            if (IsEstablished) throw new InvalidOperationException("Context has been established.");
             SCardContext context;
             _provider.SCardEstablishContext(scope, null, null, &context).ThrowIfNotSuccess();
             _context = context;
@@ -43,7 +46,7 @@ namespace PcscDotNet
         public PcscContext Release()
         {
             if (IsDisposed) throw new ObjectDisposedException(nameof(PcscContext), nameof(Release));
-            if (_context.HasValue)
+            if (IsEstablished)
             {
                 _provider.SCardReleaseContext(_context).ThrowIfNotSuccess();
                 _context = SCardContext.Default;

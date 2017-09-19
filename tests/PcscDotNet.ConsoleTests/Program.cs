@@ -6,6 +6,12 @@ namespace PcscDotNet.ConsoleTests
     {
         static void Main(string[] args)
         {
+            using (var context = Pcsc<WinSCard>.EstablishContext(SCardScope.User))
+            {
+                Console.WriteLine(context.IsEstablished);
+                context.Release();
+                Console.WriteLine(context.IsEstablished);
+            }
             Console.WriteLine("Hello World!");
         }
     }
