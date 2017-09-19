@@ -2,13 +2,15 @@ using System;
 
 namespace PcscDotNet
 {
-    public class PcscContext
+    public class PcscContext : IDisposable
     {
         private SCardContext _context;
 
         private readonly Pcsc _pcsc;
 
         private readonly IPcscProvider _provider;
+
+        public bool IsDisposed { get; private set; } = false;
 
         public Pcsc Pcsc => _pcsc;
 
@@ -24,8 +26,14 @@ namespace PcscDotNet
             Establish(scope);
         }
 
+        ~PcscContext()
+        {
+            Dispose();
+        }
+
         public unsafe void Establish(SCardScope scope)
         {
+            if (IsDisposed) throw new ObjectDisposedException(nameof(PcscContext), nameof(Establish));
             SCardContext context;
             _provider.SCardEstablishContext(scope, null, null, &context).ThrowIfNotSuccess();
             _context = context;
@@ -33,8 +41,20 @@ namespace PcscDotNet
 
         public void Release()
         {
-            _provider.SCardReleaseContext(_context).ThrowIfNotSuccess();
-            _context = default(SCardContext);
+            if (IsDisposed) throw new ObjectDisposedException(nameof(PcscContext), nameof(Release));
+            if (_context.HasValue)
+            {
+                _provider.SCardReleaseContext(_context).ThrowIfNotSuccess();
+                _context = SCardContext.Default;
+            }
+        }
+
+        public void Dispose()
+        {
+            if (IsDisposed) return;
+            Release();
+            GC.SuppressFinalize(this);
+            IsDisposed = true;
         }
     }
 }
