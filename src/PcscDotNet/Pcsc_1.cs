@@ -2,9 +2,9 @@ using System;
 
 namespace PcscDotNet
 {
-    public static class Pcsc<T> where T : class, IPcscProvider, new()
+    public static class Pcsc<TIPcscProvider> where TIPcscProvider : class, IPcscProvider, new()
     {
-        private static readonly Pcsc _instance = new Pcsc(new T());
+        private static readonly Pcsc _instance = new Pcsc(new TIPcscProvider());
 
         public static Pcsc Instance => _instance;
 
