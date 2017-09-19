@@ -1,4 +1,7 @@
-public interface IPcscProvider
+namespace PcscDotNet
 {
+    public interface IPcscProvider
+    {
 
+    }
 }
