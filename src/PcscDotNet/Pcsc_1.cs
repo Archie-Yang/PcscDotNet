@@ -7,5 +7,15 @@ namespace PcscDotNet
         private static readonly Pcsc _instance = new Pcsc(new T());
 
         public static Pcsc Instance => _instance;
+
+        public static PcscContext CreateContext()
+        {
+            return new PcscContext(_instance);
+        }
+
+        public static PcscContext EstablishContext(SCardScope scope)
+        {
+            return new PcscContext(_instance, scope);
+        }
     }
 }

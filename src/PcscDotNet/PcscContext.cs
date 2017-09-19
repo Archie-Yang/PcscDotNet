@@ -31,15 +31,16 @@ namespace PcscDotNet
             Dispose();
         }
 
-        public unsafe void Establish(SCardScope scope)
+        public unsafe PcscContext Establish(SCardScope scope)
         {
             if (IsDisposed) throw new ObjectDisposedException(nameof(PcscContext), nameof(Establish));
             SCardContext context;
             _provider.SCardEstablishContext(scope, null, null, &context).ThrowIfNotSuccess();
             _context = context;
+            return this;
         }
 
-        public void Release()
+        public PcscContext Release()
         {
             if (IsDisposed) throw new ObjectDisposedException(nameof(PcscContext), nameof(Release));
             if (_context.HasValue)
@@ -47,6 +48,7 @@ namespace PcscDotNet
                 _provider.SCardReleaseContext(_context).ThrowIfNotSuccess();
                 _context = SCardContext.Default;
             }
+            return this;
         }
 
         public void Dispose()

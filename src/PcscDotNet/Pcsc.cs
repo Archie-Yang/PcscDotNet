@@ -12,5 +12,15 @@ namespace PcscDotNet
         {
             _provider = provider;
         }
+
+        public PcscContext CreateContext()
+        {
+            return new PcscContext(this);
+        }
+
+        public PcscContext EstablishContext(SCardScope scope)
+        {
+            return new PcscContext(this, scope);
+        }
     }
 }
