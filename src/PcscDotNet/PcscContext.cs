@@ -19,7 +19,7 @@ namespace PcscDotNet
         public PcscContext(Pcsc pcsc)
         {
             _pcsc = pcsc;
-            _provider = _pcsc.Provider;
+            _provider = pcsc.Provider;
         }
 
 
