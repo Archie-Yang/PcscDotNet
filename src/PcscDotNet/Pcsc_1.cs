@@ -10,12 +10,12 @@ namespace PcscDotNet
 
         public static PcscContext CreateContext()
         {
-            return new PcscContext(_instance);
+            return _instance.CreateContext();
         }
 
         public static PcscContext EstablishContext(SCardScope scope)
         {
-            return new PcscContext(_instance, scope);
+            return _instance.EstablishContext(scope);
         }
     }
 }
