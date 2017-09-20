@@ -5,6 +5,8 @@ namespace PcscDotNet
 {
     public class PcscException : Win32Exception
     {
+        public SCardError Error => (SCardError)NativeErrorCode;
+
         public PcscException() { }
 
         public PcscException(int error) : base(error) { }
