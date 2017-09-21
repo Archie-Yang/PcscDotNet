@@ -2,7 +2,7 @@ using System;
 
 namespace PcscDotNet
 {
-    public static class Pcsc<TIPcscProvider> where TIPcscProvider : class, IPcscProvider, new()
+    public static class Pcsc<TIPcscProvider> where TIPcscProvider : IPcscProvider, new()
     {
         private static readonly Pcsc _instance = new Pcsc(new TIPcscProvider());
 
