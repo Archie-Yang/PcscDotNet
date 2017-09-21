@@ -14,18 +14,6 @@ namespace PcscDotNet
 
         public bool IsEstablished => _handle.HasValue;
 
-        public bool IsValid
-        {
-            get
-            {
-                if (IsDisposed) throw new ObjectDisposedException(nameof(PcscContext), nameof(IsValid));
-                var err = _provider.SCardIsValidContext(_handle);
-                if (err == SCardError.InvalidHandle) return false;
-                err.ThrowIfNotSuccess();
-                return true;
-            }
-        }
-
         public Pcsc Pcsc => _pcsc;
 
         public PcscContext(Pcsc pcsc)
@@ -63,6 +51,12 @@ namespace PcscDotNet
                 _handle = SCardContext.Default;
             }
             return this;
+        }
+
+        public void Validate()
+        {
+            if (IsDisposed) throw new ObjectDisposedException(nameof(PcscContext), nameof(Validate));
+            _provider.SCardIsValidContext(_handle).ThrowIfNotSuccess();
         }
 
         public void Dispose()
