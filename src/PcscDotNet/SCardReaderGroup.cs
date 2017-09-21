@@ -24,12 +24,12 @@ namespace PcscDotNet
         /// List all readers in the system.
         /// (Same as All.)
         /// </summary>
-        NotSpecified = All,
+        NotSpecified = 3,
         /// <summary>
         /// Unused legacy value.
         /// This is an internally managed group that cannot be modified by using any reader group APIs.
         /// It is intended to be used for enumeration only.
         /// </summary>
-        System = 3
+        System = 4
     }
 }
