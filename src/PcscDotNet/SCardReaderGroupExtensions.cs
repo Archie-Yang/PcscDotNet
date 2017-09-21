@@ -26,7 +26,7 @@ namespace PcscDotNet
         private const string System = "SCard$SystemReaders\000";
 
         /// <summary>
-        /// Gets defined value of SCardReaderGroup.
+        /// Gets defined value for specific SCardReaderGroup.
         /// </summary>
         /// <param name="group">SCardReaderGroup value.</param>
         /// <returns>Defined value.</returns>
