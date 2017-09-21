@@ -1,11 +1,16 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace PcscDotNet
 {
     public class WinSCard : IPcscProvider
     {
         public const string DllName = "WinSCard.dll";
+
+        public static Encoding CharacterEncoding => Encoding.Unicode;
+
+        Encoding IPcscProvider.CharacterEncoding => CharacterEncoding;
 
         [DllImport(DllName)]
         public unsafe static extern SCardError SCardEstablishContext(SCardScope dwScope, void* pvReserved1, void* pvReserved2, SCardContext* phContext);
