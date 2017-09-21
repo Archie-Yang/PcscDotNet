@@ -11,11 +11,19 @@ namespace PcscDotNet
         public unsafe static extern SCardError SCardEstablishContext(SCardScope dwScope, void* pvReserved1, void* pvReserved2, SCardContext* phContext);
 
         [DllImport(DllName)]
+        public static extern SCardError SCardIsValidContext(SCardContext hContext);
+
+        [DllImport(DllName)]
         public static extern SCardError SCardReleaseContext(SCardContext hContext);
 
         unsafe SCardError IPcscProvider.SCardEstablishContext(SCardScope dwScope, void* pvReserved1, void* pvReserved2, SCardContext* phContext)
         {
             return SCardEstablishContext(dwScope, pvReserved1, pvReserved2, phContext);
+        }
+
+        SCardError IPcscProvider.SCardIsValidContext(SCardContext hContext)
+        {
+            return SCardIsValidContext(hContext);
         }
 
         SCardError IPcscProvider.SCardReleaseContext(SCardContext hContext)
