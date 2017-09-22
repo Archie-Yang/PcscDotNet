@@ -1,7 +1,7 @@
 namespace PcscDotNet
 {
     /// <summary>
-    /// Extension method of SCardReaderGroup.
+    /// Extension methods of SCardReaderGroup.
     /// </summary>
     public static class SCardReaderGroupExtensions
     {

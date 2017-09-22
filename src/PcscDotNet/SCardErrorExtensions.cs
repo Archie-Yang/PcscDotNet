@@ -3,6 +3,9 @@ using System.Linq;
 
 namespace PcscDotNet
 {
+    /// <summary>
+    /// Extension methods for SCardError.
+    /// </summary>
     public static class SCardErrorExtensions
     {
         public static void Throw(this SCardError error)
