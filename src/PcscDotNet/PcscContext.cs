@@ -32,6 +32,14 @@ namespace PcscDotNet
             Dispose();
         }
 
+        public void Dispose()
+        {
+            if (IsDisposed) return;
+            ReleaseInternal();
+            IsDisposed = true;
+            GC.SuppressFinalize(this);
+        }
+
         public unsafe PcscContext Establish(SCardScope scope)
         {
             if (IsDisposed) throw new ObjectDisposedException(nameof(PcscContext), nameof(Establish));
@@ -45,26 +53,22 @@ namespace PcscDotNet
         public PcscContext Release()
         {
             if (IsDisposed) throw new ObjectDisposedException(nameof(PcscContext), nameof(Release));
-            if (IsEstablished)
-            {
-                _provider.SCardReleaseContext(_handle).ThrowIfNotSuccess();
-                _handle = SCardContext.Default;
-            }
+            ReleaseInternal();
             return this;
         }
 
-        public void Validate()
+        public PcscContext Validate()
         {
             if (IsDisposed) throw new ObjectDisposedException(nameof(PcscContext), nameof(Validate));
             _provider.SCardIsValidContext(_handle).ThrowIfNotSuccess();
+            return this;
         }
 
-        public void Dispose()
+        private void ReleaseInternal()
         {
-            if (IsDisposed) return;
-            Release();
-            GC.SuppressFinalize(this);
-            IsDisposed = true;
+            if (!IsEstablished) return;
+            _provider.SCardReleaseContext(_handle).ThrowIfNotSuccess();
+            _handle = SCardContext.Default;
         }
     }
 }
