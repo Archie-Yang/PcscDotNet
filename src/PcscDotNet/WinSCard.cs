@@ -22,7 +22,7 @@ namespace PcscDotNet
         public static extern SCardError SCardIsValidContext(SCardContext hContext);
 
         [DllImport(DllName, CharSet = CharSet.Unicode)]
-        public unsafe static extern SCardError SCardListReaders(SCardContext hContext, string mszGroups, byte** mszReaders, int* pcchReaders);
+        public unsafe static extern SCardError SCardListReaders(SCardContext hContext, string mszGroups, void** mszReaders, int* pcchReaders);
 
 
         [DllImport(DllName)]
@@ -43,7 +43,7 @@ namespace PcscDotNet
             return SCardIsValidContext(hContext);
         }
 
-        unsafe SCardError IPcscProvider.SCardListReaders(SCardContext hContext, string mszGroups, byte** mszReaders, int* pcchReaders)
+        unsafe SCardError IPcscProvider.SCardListReaders(SCardContext hContext, string mszGroups, void** mszReaders, int* pcchReaders)
         {
             return SCardListReaders(hContext, mszGroups, mszReaders, pcchReaders);
         }
