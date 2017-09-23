@@ -47,11 +47,11 @@ Currently, this interface declares these methods:
 
 ### [Pcsc Class](src/PcscDotNet/Pcsc.cs "Go to Source")
 
-This class is the start point for using `PC/SC` functions. You need to specify [`IPcscProvider`][] instance to create [`Pcsc`][] instance.
+This class is the start point for accessing `PC/SC`. You need to specify [`IPcscProvider`][] instance to create [`Pcsc`][] instance.
 
 ### [Pcsc\<TIPcscProvider\> Class](src/PcscDotNet/Pcsc_1.cs "Go to Source")
 
-This class provies static members with corresponding members in [`Pcsc`][] class, using singleton instance of `TIPcscProvider` which implements [`IPcscProvider`][] interface.
+This class provides static members with corresponding members in [`Pcsc`][] class, using singleton instance of `TIPcscProvider` which implements [`IPcscProvider`][] interface.
 
 > Most of time, `TIPcscProvider` can be used with singleton safely unless its members may be changed, e.g., the provider loads functions from different library dynamically.
 
