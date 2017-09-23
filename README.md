@@ -42,6 +42,7 @@ Currently, this interface declares these methods:
 - `SCardEstablishContext`
 - `SCardFreeMemory`
 - `SCardIsValidContext`
+- `SCardListReaders`
 - `SCardReleaseContext`
 - **Continue...**
 
