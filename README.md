@@ -47,7 +47,7 @@ Currently, this interface declares these methods:
 
 ### [Pcsc Class](src/PcscDotNet/Pcsc.cs "Go to Source")
 
-This class is the start point for accessing `PC/SC`. You need to specify [`IPcscProvider`][] instance to create [`Pcsc`][] instance.
+This class is the start point for accessing *PC/SC*. You need to specify [`IPcscProvider`][] instance to create [`Pcsc`][] instance.
 
 ### [Pcsc\<TIPcscProvider\> Class](src/PcscDotNet/Pcsc_1.cs "Go to Source")
 
