@@ -50,8 +50,9 @@ namespace PcscDotNet
             {
                 var bufferLength = encoding.GetMaxByteCount(charCount);
                 var buffer = new byte[bufferLength];
-                fixed (byte* pBuffer = &buffer[0])
+                fixed (byte* hBuffer = &buffer[0])
                 {
+                    var pBuffer = hBuffer;
                     err = provider.SCardListReaders(handle, groupValue, pBuffer, &charCount);
                     switch (err)
                     {
