@@ -6,7 +6,7 @@ namespace PcscDotNet
     public static class PcscProvider
     {
         /// <summary>
-        /// Length designator for auto-allocation memory from the smart card resource manager.
+        /// Length designator for auto-allocation memory from the Smart Card Resource Manager.
         /// </summary>
         public const int SCardAutoAllocate = -1;
     }

@@ -6,6 +6,9 @@ namespace PcscDotNet
 {
     public class WinSCard : IPcscProvider
     {
+        /// <summary>
+        /// The name of the DLL.
+        /// </summary>
         public const string DllName = "WinSCard.dll";
 
         public static Encoding CharacterEncoding => Encoding.Unicode;
@@ -23,7 +26,6 @@ namespace PcscDotNet
 
         [DllImport(DllName, CharSet = CharSet.Unicode)]
         public unsafe static extern SCardError SCardListReaders(SCardContext hContext, string mszGroups, void* mszReaders, int* pcchReaders);
-
 
         [DllImport(DllName)]
         public static extern SCardError SCardReleaseContext(SCardContext hContext);

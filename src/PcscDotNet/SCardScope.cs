@@ -1,7 +1,7 @@
 namespace PcscDotNet
 {
     /// <summary>
-    /// Scope of the smart card resource manager context.
+    /// Scope of the Smart Card Resource Manager context.
     /// </summary>
     public enum SCardScope
     {
