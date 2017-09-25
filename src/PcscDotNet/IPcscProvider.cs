@@ -5,7 +5,7 @@ namespace PcscDotNet
 {
     public interface IPcscProvider
     {
-        Encoding CharacterEncoding { get; }
+        bool UseUnicode { get; }
 
         unsafe SCardError SCardEstablishContext(SCardScope dwScope, void* pvReserved1, void* pvReserved2, SCardContext* phContext);
 

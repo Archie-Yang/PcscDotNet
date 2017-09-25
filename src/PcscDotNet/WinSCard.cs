@@ -11,9 +11,9 @@ namespace PcscDotNet
         /// </summary>
         public const string DllName = "WinSCard.dll";
 
-        public static Encoding CharacterEncoding => Encoding.Unicode;
+        public static bool UseUnicode => true;
 
-        Encoding IPcscProvider.CharacterEncoding => CharacterEncoding;
+        bool IPcscProvider.UseUnicode => UseUnicode;
 
         [DllImport(DllName)]
         public unsafe static extern SCardError SCardEstablishContext(SCardScope dwScope, void* pvReserved1, void* pvReserved2, SCardContext* phContext);

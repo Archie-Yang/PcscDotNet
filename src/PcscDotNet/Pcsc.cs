@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace PcscDotNet
 {
@@ -34,40 +35,36 @@ namespace PcscDotNet
         internal unsafe string[] GetReaderNames(SCardContext handle, SCardReaderGroup group = SCardReaderGroup.NotSpecified)
         {
             var provider = _provider;
-            var encoding = provider.CharacterEncoding;
-            var groupValue = group.GetDefinedValue();
-            var nullCharacter = _nullCharacter;
-            var charCount = 0;
-            /*
-               Currently, can not find the better way using auto-allocate to receive reader names with different encoding.
-               Different providers may use different encoding, it's could be out of standard text encodings.
-               Find `NULL` characters using back forward method is slower, and the order of reader names becomes descending also.
-               > If you have any idea, welcome to share, thanks!
-            */
-            var err = provider.SCardListReaders(handle, groupValue, null, &charCount);
-            if (err != SCardError.NoReadersAvailable) err.ThrowIfNotSuccess();
-            for (; ; )
+            string[] readerNames = null;
+            byte* pReaderNames;
+            var charCount = PcscProvider.SCardAutoAllocate;
+            var err = provider.SCardListReaders(handle, group.GetDefinedValue(), &pReaderNames, &charCount);
+            try
             {
-                var bufferLength = encoding.GetMaxByteCount(charCount);
-                var buffer = new byte[bufferLength];
-                fixed (byte* hBuffer = &buffer[0])
+                switch (err)
                 {
-                    var pBuffer = hBuffer;
-                    err = provider.SCardListReaders(handle, groupValue, pBuffer, &charCount);
-                    switch (err)
-                    {
-                        case SCardError.InsufficientBuffer:
-                            // Buffer is too small, may due to newer reader is introduced to current context.
-                            continue;
-                        case SCardError.NoReadersAvailable:
-                            // In Windows, it seems to still return a `NULL` character with `SCardError.Success` status even none of reader names is found.
-                            return new string[0];
-                        default:
-                            err.ThrowIfNotSuccess();
-                            return encoding.GetString(pBuffer, bufferLength).TrimEnd(nullCharacter).Split(nullCharacter, StringSplitOptions.RemoveEmptyEntries);
-                    }
+                    case SCardError.NoReadersAvailable:
+                        // In Windows, it seems to still return a `NULL` character with `SCardError.Success` status even none of reader names is found.
+                        readerNames = new string[0];
+                        break;
+                    case SCardError.Successs:
+                        /*
+                           Providers can use ANSI (e.g., WinSCard and pcsc-lite) or Unicode (e.g., WinSCard) for the encoding of characters.
+                           `Marshal.PtrToStringUni`: Copies the specific number of Unicode characters back.
+                           `Marshal.PtrToStringAnsi`: Copies the specific byte count of ANSI string back.
+                        */
+                        readerNames = (provider.UseUnicode ? Marshal.PtrToStringUni((IntPtr)pReaderNames, charCount) : Marshal.PtrToStringAnsi((IntPtr)pReaderNames, charCount)).Split(_nullCharacter, StringSplitOptions.RemoveEmptyEntries);
+                        break;
+                    default:
+                        err.Throw();
+                        break;
                 }
             }
+            finally
+            {
+                if (pReaderNames != null) provider.SCardFreeMemory(handle, pReaderNames).ThrowIfNotSuccess();
+            }
+            return readerNames;
         }
     }
 }

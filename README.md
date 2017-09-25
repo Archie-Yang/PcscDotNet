@@ -35,7 +35,7 @@ The main interfaces/classes:
 
 This interface declares the properties and methods which needs to be implemented for accessing *PC/SC*.
 
-> The property: `CharacterEncoding`, is used to pass characters with correct encoding while calling specific functions. (e.g., the encoding of reader names, from `SCardListReaders`.)
+> The property: `UseUnicode`, determines which characters encoding (**ANSI** when `false` or **Unicode** when `true`) is used for calling specific methods of provider. (e.g., the encoding of group/reader names, in `SCardListReaders`.)
 
 Currently, this interface declares these methods:
 
