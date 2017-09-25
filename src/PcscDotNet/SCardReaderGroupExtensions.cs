@@ -8,22 +8,22 @@ namespace PcscDotNet
         /// <summary>
         /// Defined value of SCardReaderGroup.All.
         /// </summary>
-        private const string All = "SCard$AllReaders\000";
+        private const string All = "SCard$AllReaders\0";
 
         /// <summary>
         /// Defined value of SCardReaderGroup.Default.
         /// </summary>
-        private const string Default = "SCard$DefaultReaders\000";
+        private const string Default = "SCard$DefaultReaders\0";
 
         /// <summary>
         /// Defined value of SCardReaderGroup.Local.
         /// </summary>
-        private const string Local = "SCard$LocalReaders\000";
+        private const string Local = "SCard$LocalReaders\0";
 
         /// <summary>
         /// Defined value of SCardReaderGroup.System.
         /// </summary>
-        private const string System = "SCard$SystemReaders\000";
+        private const string System = "SCard$SystemReaders\0";
 
         /// <summary>
         /// Gets defined value for specific SCardReaderGroup.
