@@ -6,8 +6,6 @@ namespace PcscDotNet
 {
     public class Pcsc
     {
-        private static readonly char[] _nullCharacter = new char[] { '\0' };
-
         private readonly IPcscProvider _provider;
 
         public IPcscProvider Provider => _provider;
