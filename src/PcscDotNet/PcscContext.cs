@@ -53,7 +53,7 @@ namespace PcscDotNet
 
         public List<string> GetReaderNames(SCardReaderGroup group = SCardReaderGroup.NotSpecified)
         {            
-            if (IsDisposed) throw new ObjectDisposedException(nameof(PcscContext), nameof(Establish));
+            if (IsDisposed) throw new ObjectDisposedException(nameof(PcscContext), nameof(GetReaderNames));
             return _pcsc.GetReaderNames(_handle, group);
         }
 
