@@ -39,6 +39,7 @@ This interface declares the properties and methods which needs to be implemented
 
 Currently, this interface declares these methods:
 
+- `SCardCancel`
 - `SCardEstablishContext`
 - `SCardFreeMemory`
 - `SCardIsValidContext`
