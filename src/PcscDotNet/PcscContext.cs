@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace PcscDotNet
 {
@@ -50,8 +51,8 @@ namespace PcscDotNet
             return this;
         }
 
-        public string[] GetReaderNames(SCardReaderGroup group = SCardReaderGroup.NotSpecified)
-        {
+        public List<string> GetReaderNames(SCardReaderGroup group = SCardReaderGroup.NotSpecified)
+        {            
             if (IsDisposed) throw new ObjectDisposedException(nameof(PcscContext), nameof(Establish));
             return _pcsc.GetReaderNames(_handle, group);
         }

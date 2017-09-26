@@ -27,15 +27,15 @@ namespace PcscDotNet
             return new PcscContext(this, scope);
         }
 
-        public string[] GetReaderNames(SCardReaderGroup group = SCardReaderGroup.NotSpecified)
+        public List<string> GetReaderNames(SCardReaderGroup group = SCardReaderGroup.NotSpecified)
         {
             return GetReaderNames(SCardContext.Default, group);
         }
 
-        internal unsafe string[] GetReaderNames(SCardContext handle, SCardReaderGroup group = SCardReaderGroup.NotSpecified)
+        internal unsafe List<string> GetReaderNames(SCardContext handle, SCardReaderGroup group)
         {
+            var readerNames = new List<string>();
             var provider = _provider;
-            string[] readerNames = null;
             byte* pReaderNames;
             var charCount = PcscProvider.SCardAutoAllocate;
             var err = provider.SCardListReaders(handle, group.GetDefinedValue(), &pReaderNames, &charCount);
@@ -45,7 +45,6 @@ namespace PcscDotNet
                 {
                     case SCardError.NoReadersAvailable:
                         // In Windows, it seems to still return a `NULL` character with `SCardError.Success` status even none of reader names is found.
-                        readerNames = new string[0];
                         break;
                     case SCardError.Successs:
                         /*
@@ -53,7 +52,13 @@ namespace PcscDotNet
                            `Marshal.PtrToStringUni`: Copies the specific number of Unicode characters back.
                            `Marshal.PtrToStringAnsi`: Copies the specific byte count of ANSI string back.
                         */
-                        readerNames = (provider.UseUnicode ? Marshal.PtrToStringUni((IntPtr)pReaderNames, charCount) : Marshal.PtrToStringAnsi((IntPtr)pReaderNames, charCount)).Split(_nullCharacter, StringSplitOptions.RemoveEmptyEntries);
+                        var readerNamesString = provider.UseUnicode ? Marshal.PtrToStringUni((IntPtr)pReaderNames, charCount) : Marshal.PtrToStringAnsi((IntPtr)pReaderNames, charCount);
+                        for (int offset = 0, offsetNull, length = readerNamesString.Length; ;)
+                        {
+                            if (offset >= length || (offsetNull = readerNamesString.IndexOf('\0', offset)) <= offset) break;
+                            readerNames.Add(readerNamesString.Substring(offset, offsetNull - offset));
+                            offset = offsetNull + 1;
+                        }
                         break;
                     default:
                         err.Throw();

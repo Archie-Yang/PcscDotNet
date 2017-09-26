@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace PcscDotNet
 {
@@ -18,7 +19,7 @@ namespace PcscDotNet
             return _instance.EstablishContext(scope);
         }
 
-        public static string[] GetReaderNames(SCardReaderGroup group = SCardReaderGroup.NotSpecified)
+        public static List<string> GetReaderNames(SCardReaderGroup group = SCardReaderGroup.NotSpecified)
         {
             return _instance.GetReaderNames(group);
         }
