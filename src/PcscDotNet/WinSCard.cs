@@ -16,6 +16,9 @@ namespace PcscDotNet
         bool IPcscProvider.UseUnicode => UseUnicode;
 
         [DllImport(DllName)]
+        public static extern SCardError SCardCancel(SCardContext hContext);
+
+        [DllImport(DllName)]
         public unsafe static extern SCardError SCardEstablishContext(SCardScope dwScope, void* pvReserved1, void* pvReserved2, SCardContext* phContext);
 
         [DllImport(DllName)]
@@ -29,6 +32,11 @@ namespace PcscDotNet
 
         [DllImport(DllName)]
         public static extern SCardError SCardReleaseContext(SCardContext hContext);
+
+        SCardError IPcscProvider.SCardCancel(SCardContext hContext)
+        {
+            return SCardCancel(hContext);
+        }
 
         unsafe SCardError IPcscProvider.SCardEstablishContext(SCardScope dwScope, void* pvReserved1, void* pvReserved2, SCardContext* phContext)
         {

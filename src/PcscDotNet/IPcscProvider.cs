@@ -7,6 +7,8 @@ namespace PcscDotNet
     {
         bool UseUnicode { get; }
 
+        SCardError SCardCancel(SCardContext hContext);
+
         unsafe SCardError SCardEstablishContext(SCardScope dwScope, void* pvReserved1, void* pvReserved2, SCardContext* phContext);
 
         unsafe SCardError SCardFreeMemory(SCardContext hContext, void* pvMem);
