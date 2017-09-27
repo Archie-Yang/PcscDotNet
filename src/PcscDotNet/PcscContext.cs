@@ -51,10 +51,17 @@ namespace PcscDotNet
             return this;
         }
 
-        public List<string> GetReaderNames(SCardReaderGroup group = SCardReaderGroup.NotSpecified)
-        {            
+        public IEnumerable<string> GetReaderNames(SCardReaderGroup group = SCardReaderGroup.NotSpecified)
+        {
             if (IsDisposed) throw new ObjectDisposedException(nameof(PcscContext), nameof(GetReaderNames));
-            return _pcsc.GetReaderNames(_handle, group);
+            var readerNames = _pcsc.GetReaderNames(_handle, group);
+            if (readerNames == null) yield break;
+            for (int offset = 0, offsetNull, length = readerNames.Length; ;)
+            {
+                if (offset >= length || (offsetNull = readerNames.IndexOf('\0', offset)) <= offset) yield break;
+                yield return readerNames.Substring(offset, offsetNull - offset);
+                offset = offsetNull + 1;
+            }
         }
 
         public PcscContext Release()

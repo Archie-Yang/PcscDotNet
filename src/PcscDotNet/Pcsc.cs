@@ -25,14 +25,21 @@ namespace PcscDotNet
             return new PcscContext(this, scope);
         }
 
-        public List<string> GetReaderNames(SCardReaderGroup group = SCardReaderGroup.NotSpecified)
+        public IEnumerable<string> GetReaderNames(SCardReaderGroup group = SCardReaderGroup.NotSpecified)
         {
-            return GetReaderNames(SCardContext.Default, group);
+            var readerNames = GetReaderNames(SCardContext.Default, group);
+            if (readerNames == null) yield break;
+            for (int offset = 0, offsetNull, length = readerNames.Length; ;)
+            {
+                if (offset >= length || (offsetNull = readerNames.IndexOf('\0', offset)) <= offset) yield break;
+                yield return readerNames.Substring(offset, offsetNull - offset);
+                offset = offsetNull + 1;
+            }
         }
 
-        internal unsafe List<string> GetReaderNames(SCardContext handle, SCardReaderGroup group)
+        internal unsafe string GetReaderNames(SCardContext handle, SCardReaderGroup group)
         {
-            var readerNames = new List<string>();
+            string readerNames = null;
             var provider = _provider;
             byte* pReaderNames;
             var charCount = PcscProvider.SCardAutoAllocate;
@@ -50,13 +57,7 @@ namespace PcscDotNet
                            `Marshal.PtrToStringUni`: Copies the specific number of Unicode characters back.
                            `Marshal.PtrToStringAnsi`: Copies the specific byte count of ANSI string back.
                         */
-                        var readerNamesString = provider.UseUnicode ? Marshal.PtrToStringUni((IntPtr)pReaderNames, charCount) : Marshal.PtrToStringAnsi((IntPtr)pReaderNames, charCount);
-                        for (int offset = 0, offsetNull, length = readerNamesString.Length; ;)
-                        {
-                            if (offset >= length || (offsetNull = readerNamesString.IndexOf('\0', offset)) <= offset) break;
-                            readerNames.Add(readerNamesString.Substring(offset, offsetNull - offset));
-                            offset = offsetNull + 1;
-                        }
+                        readerNames = provider.UseUnicode ? Marshal.PtrToStringUni((IntPtr)pReaderNames, charCount) : Marshal.PtrToStringAnsi((IntPtr)pReaderNames, charCount);
                         break;
                     default:
                         err.Throw();

@@ -19,7 +19,7 @@ namespace PcscDotNet
             return _instance.EstablishContext(scope);
         }
 
-        public static List<string> GetReaderNames(SCardReaderGroup group = SCardReaderGroup.NotSpecified)
+        public static IEnumerable<string> GetReaderNames(SCardReaderGroup group = SCardReaderGroup.NotSpecified)
         {
             return _instance.GetReaderNames(group);
         }
