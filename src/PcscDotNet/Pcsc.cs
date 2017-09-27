@@ -54,10 +54,10 @@ namespace PcscDotNet
                     case SCardError.Successs:
                         /*
                            Providers can use ANSI (e.g., WinSCard and pcsc-lite) or Unicode (e.g., WinSCard) for the encoding of characters.
-                           `Marshal.PtrToStringUni`: Copies the specific number of Unicode characters back.
-                           `Marshal.PtrToStringAnsi`: Copies the specific byte count of ANSI string back.
+                           In ANSI, `charCount` means the byte count of string.
+                           In Unicode, `charCount` means the number of Unicode characters of string.
                         */
-                        readerNames = provider.UseUnicode ? Marshal.PtrToStringUni((IntPtr)pReaderNames, charCount) : Marshal.PtrToStringAnsi((IntPtr)pReaderNames, charCount);
+                        readerNames = provider.AllocateString(pReaderNames, charCount);
                         break;
                     default:
                         err.Throw();

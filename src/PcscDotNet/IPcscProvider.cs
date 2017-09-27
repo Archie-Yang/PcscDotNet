@@ -5,7 +5,7 @@ namespace PcscDotNet
 {
     public interface IPcscProvider
     {
-        bool UseUnicode { get; }
+        unsafe string AllocateString(void* ptr, int length);
 
         SCardError SCardCancel(SCardContext hContext);
 

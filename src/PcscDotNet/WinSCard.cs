@@ -11,10 +11,6 @@ namespace PcscDotNet
         /// </summary>
         public const string DllName = "WinSCard.dll";
 
-        public static bool UseUnicode => true;
-
-        bool IPcscProvider.UseUnicode => UseUnicode;
-
         [DllImport(DllName)]
         public static extern SCardError SCardCancel(SCardContext hContext);
 
@@ -32,6 +28,11 @@ namespace PcscDotNet
 
         [DllImport(DllName)]
         public static extern SCardError SCardReleaseContext(SCardContext hContext);
+
+        unsafe string IPcscProvider.AllocateString(void* ptr, int length)
+        {
+            return Marshal.PtrToStringUni((IntPtr)ptr, length);
+        }
 
         SCardError IPcscProvider.SCardCancel(SCardContext hContext)
         {

@@ -33,11 +33,9 @@ The main interfaces/classes:
 
 ### [IPcscProvider Interface](src/PcscDotNet/IPcscProvider.cs "Go to Source")
 
-This interface declares the properties and methods which needs to be implemented for accessing *PC/SC*.
+This interface declares the members that need to be implemented for accessing *PC/SC* functions.
 
-> The property: `UseUnicode`, determines which characters encoding (**ANSI** when `false` or **Unicode** when `true`) is used for calling specific methods of provider. (e.g., the encoding of group/reader names, in `SCardListReaders`.)
-
-Currently, this interface declares these methods:
+These are the methods declared with the same name of *PC/SC* functions currently:
 
 - `SCardCancel`
 - `SCardEstablishContext`
@@ -45,15 +43,18 @@ Currently, this interface declares these methods:
 - `SCardIsValidContext`
 - `SCardListReaders`
 - `SCardReleaseContext`
-- **Continue...**
+
+These methods are used for string marshalling:
+
+- `AllocateString`
 
 ### [Pcsc Class](src/PcscDotNet/Pcsc.cs "Go to Source")
 
-This class is the start point for accessing *PC/SC*. You need to specify [`IPcscProvider`][] instance to create [`Pcsc`][] instance.
+This class is the start point for accessing *PC/SC* functions. You need to specify [`IPcscProvider`][] instance to create [`Pcsc`][] instance.
 
 ### [Pcsc\<TIPcscProvider\> Class](src/PcscDotNet/Pcsc_1.cs "Go to Source")
 
-This class provides static members with corresponding members in [`Pcsc`][] class, using singleton instance of `TIPcscProvider` which implements [`IPcscProvider`][] interface.
+This class provides the static members with corresponding members in [`Pcsc`][] class, using singleton instance of `TIPcscProvider` which implements [`IPcscProvider`][] interface.
 
 > Most of time, `TIPcscProvider` can be used with singleton safely unless its members may be changed, e.g., the provider loads functions from different library dynamically.
 
