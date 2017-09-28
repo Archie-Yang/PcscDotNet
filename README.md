@@ -60,7 +60,7 @@ This class provides the static members with corresponding members in [`Pcsc`][] 
 
 #### [WinSCard Class](src/PcscDotNet/WinSCard.cs "Go to Source")
 
-This class implements [`IPcscProvider`][] using `WinSCard.dll` of *Windows* enviroment.
+This class implements [`IPcscProvider`][] using `WinSCard.dll` of *Windows* environment.
 
 ---
 
