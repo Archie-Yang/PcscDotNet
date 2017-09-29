@@ -5,7 +5,11 @@ namespace PcscDotNet
 {
     public interface IPcscProvider
     {
+        unsafe void* AllocateString(string value);
+
         unsafe string AllocateString(void* ptr, int length);
+
+        unsafe void FreeString(void* ptr);
 
         SCardError SCardCancel(SCardContext hContext);
 

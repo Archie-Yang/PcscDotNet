@@ -29,9 +29,19 @@ namespace PcscDotNet
         [DllImport(DllName)]
         public static extern SCardError SCardReleaseContext(SCardContext hContext);
 
+        unsafe void* IPcscProvider.AllocateString(string value)
+        {
+            return (void*)Marshal.StringToHGlobalUni(value);
+        }
+
         unsafe string IPcscProvider.AllocateString(void* ptr, int length)
         {
             return Marshal.PtrToStringUni((IntPtr)ptr, length);
+        }
+
+        unsafe void IPcscProvider.FreeString(void* ptr)
+        {
+            Marshal.FreeHGlobal((IntPtr)ptr);
         }
 
         SCardError IPcscProvider.SCardCancel(SCardContext hContext)
