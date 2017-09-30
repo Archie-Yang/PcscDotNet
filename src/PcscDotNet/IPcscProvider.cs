@@ -24,6 +24,8 @@ namespace PcscDotNet
 
         SCardError SCardIsValidContext(SCardContext hContext);
 
+        unsafe SCardError SCardListReaderGroups(SCardContext hContext, void* mszGroups, int* pcchGroups);
+
         unsafe SCardError SCardListReaders(SCardContext hContext, string mszGroups, void* mszReaders, int* pcchReaders);
 
         SCardError SCardReleaseContext(SCardContext hContext);
