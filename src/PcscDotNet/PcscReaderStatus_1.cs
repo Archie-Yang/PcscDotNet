@@ -35,18 +35,17 @@ namespace PcscDotNet
             {
                 for (var i = 0; i < length; ++i)
                 {
-                    _readerStates[i].Reader = (void*)provider.AllocateString(Items[i].ReaderName);
+                    readerStates[i].Reader = (void*)provider.AllocateString(Items[i].ReaderName);
                 }
                 hReaderStates = GCHandle.Alloc(readerStates, GCHandleType.Pinned);
-                var pReaderStates = (void*)hReaderStates.AddrOfPinnedObject();
-                provider.SCardGetStatusChange(Context.Handle, timeout, pReaderStates, length).ThrowIfNotSuccess();
+                provider.SCardGetStatusChange(Context.Handle, timeout, (void*)hReaderStates.AddrOfPinnedObject(), length).ThrowIfNotSuccess();
             }
             finally
             {
                 if (hReaderStates.IsAllocated) hReaderStates.Free();
                 for (var i = 0; i < length; ++i)
                 {
-                    CopyAndFree(provider, ref _readerStates[i], Items[i]);
+                    CopyAndFree(provider, ref readerStates[i], Items[i]);
                 }
             }
             return this;
