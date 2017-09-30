@@ -40,13 +40,28 @@ These are the methods declared with the same name of *PC/SC* functions currently
 - `SCardCancel`
 - `SCardEstablishContext`
 - `SCardFreeMemory`
+- `SCardGetStatusChange`
 - `SCardIsValidContext`
 - `SCardListReaders`
 - `SCardReleaseContext`
 
-These methods are used for string marshalling:
+Other methods:
 
+- `AllocateReaderStatus`
+  > Allocates the instance of `PcscReaderStatus` (`PcscReaderStatus<TISCardReaderState>`) with the specific blittable type of structure which has implemented `ISCardReaderState` interface.
 - `AllocateString`
+  > Allocates string in managed and unmanaged memory.
+- `FreeString`
+  > Releases the unmanaged string allocated by `AllocateString`.
+
+If you want to implement your provider using `WinSCard` or `pcsc-lite`, see the table below, it shows the differnet definitions between platforms:
+
+| Unmanaged Defined              | *    | `WinSCard` (*Windows*) | `pcsc-lite` (*OS X*) | `pcsc-lite` (*Linux*) |
+| ------------------------------ | ---- | ---------------------- | -------------------- | --------------------- |
+| `DWORD`                        | Size | 4                      | 4                    | Size of Pointer       |
+| `LONG`                         | Size | 4                      | 4                    | Size of Pointer       |
+| `SCARD_READERSTATE`            | Pack | Default                | 1                    | Default               |
+| `rgbAtr` (`SCARD_READERSTATE`) | Size | 36                     | 33                   | 33                    |
 
 ### [Pcsc Class](src/PcscDotNet/Pcsc.cs "Go to Source")
 
