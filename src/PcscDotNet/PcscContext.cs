@@ -36,6 +36,12 @@ namespace PcscDotNet
             Dispose();
         }
 
+        public void Cancel()
+        {
+            if (IsDisposed) throw new ObjectDisposedException(nameof(PcscContext), nameof(Cancel));
+            _provider.SCardCancel(_handle).ThrowIfNotSuccess();
+        }
+
         public void Dispose()
         {
             if (IsDisposed) return;

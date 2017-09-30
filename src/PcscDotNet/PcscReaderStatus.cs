@@ -25,6 +25,11 @@ namespace PcscDotNet
             }
         }
 
+        public void Cancel()
+        {
+            Context.Cancel();
+        }
+
         public PcscReaderStatus Do(PcscReaderStatusAction action)
         {
             action(this);
