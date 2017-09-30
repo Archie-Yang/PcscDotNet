@@ -62,6 +62,11 @@ namespace PcscDotNet
 
         public IEnumerable<string> GetReaderNames(SCardReaderGroup group = SCardReaderGroup.NotSpecified)
         {
+            return GetReaderNames(group.GetDefinedValue());
+        }
+
+        public IEnumerable<string> GetReaderNames(string group)
+        {
             if (IsDisposed) throw new ObjectDisposedException(nameof(PcscContext), nameof(GetReaderNames));
             var readerNames = _pcsc.GetReaderNames(_handle, group);
             if (readerNames == null) yield break;

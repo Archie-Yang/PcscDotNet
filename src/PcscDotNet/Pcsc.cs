@@ -27,6 +27,11 @@ namespace PcscDotNet
 
         public IEnumerable<string> GetReaderNames(SCardReaderGroup group = SCardReaderGroup.NotSpecified)
         {
+            return GetReaderNames(group.GetDefinedValue());
+        }
+
+        public IEnumerable<string> GetReaderNames(string group)
+        {
             var readerNames = GetReaderNames(SCardContext.Default, group);
             if (readerNames == null) yield break;
             for (int offset = 0, offsetNull, length = readerNames.Length; ;)
@@ -37,13 +42,13 @@ namespace PcscDotNet
             }
         }
 
-        internal unsafe string GetReaderNames(SCardContext handle, SCardReaderGroup group)
+        internal unsafe string GetReaderNames(SCardContext handle, string group)
         {
             string readerNames = null;
             var provider = _provider;
             byte* pReaderNames;
             var charCount = PcscProvider.SCardAutoAllocate;
-            var err = provider.SCardListReaders(handle, group.GetDefinedValue(), &pReaderNames, &charCount);
+            var err = provider.SCardListReaders(handle, group, &pReaderNames, &charCount);
             try
             {
                 switch (err)
