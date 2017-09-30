@@ -11,6 +11,8 @@ namespace PcscDotNet
 
         private readonly IPcscProvider _provider;
 
+        public SCardContext Handle => _handle;
+
         public bool IsDisposed { get; private set; } = false;
 
         public bool IsEstablished => _handle.HasValue;
