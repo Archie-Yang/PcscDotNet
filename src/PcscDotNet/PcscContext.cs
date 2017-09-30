@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PcscDotNet
 {
@@ -64,6 +65,21 @@ namespace PcscDotNet
                 yield return readerNames.Substring(offset, offsetNull - offset);
                 offset = offsetNull + 1;
             }
+        }
+
+        public PcscReaderStatus GetStatus(IEnumerable<string> readerNames)
+        {
+            return GetStatus(readerNames.ToList());
+        }
+
+        public PcscReaderStatus GetStatus(IList<string> readerNames)
+        {
+            return _provider.AllocateReaderStatus(this, readerNames).WaitForChanged();
+        }
+
+        public PcscReaderStatus GetStatus(params string[] readerNames)
+        {
+            return _provider.AllocateReaderStatus(this, readerNames).WaitForChanged();
         }
 
         public PcscContext Release()
