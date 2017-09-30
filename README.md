@@ -9,9 +9,9 @@
 ## Projects
 
 - [src/PcscDotNet](src/PcscDotNet)
-    > *PcscDotNet* library.
+  > *PcscDotNet* library.
 - [tests/PcscDotNet.ConsoleTests](tests/PcscDotNet.ConsoleTests)
-    > Console tests.
+  > Console tests.
 
 ---
 
@@ -77,7 +77,7 @@ This class provides the static members with corresponding members in [`Pcsc`][] 
 
 #### [WinSCard Class](src/PcscDotNet/WinSCard.cs "Go to Source")
 
-This class implements [`IPcscProvider`][] using `WinSCard.dll` of *Windows* environment.
+This class implements [`IPcscProvider`][] using `WinSCard.dll` of *Windows* environment (*Unicode*).
 
 ---
 
