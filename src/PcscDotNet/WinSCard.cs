@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -20,6 +21,9 @@ namespace PcscDotNet
         [DllImport(DllName)]
         public unsafe static extern SCardError SCardFreeMemory(SCardContext hContext, void* pvMem);
 
+        [DllImport(DllName, CharSet = CharSet.Unicode)]
+        public unsafe static extern SCardError SCardGetStatusChange(SCardContext hContext, int dwTimeout, SCardReaderState* rgReaderStates, int cReaders);
+
         [DllImport(DllName)]
         public static extern SCardError SCardIsValidContext(SCardContext hContext);
 
@@ -28,6 +32,11 @@ namespace PcscDotNet
 
         [DllImport(DllName)]
         public static extern SCardError SCardReleaseContext(SCardContext hContext);
+
+        PcscReaderStatus IPcscProvider.AllocateReaderStatus(PcscContext context, IList<string> readerNames)
+        {
+            return new PcscReaderStatus<SCardReaderState>(context, readerNames);
+        }
 
         unsafe void* IPcscProvider.AllocateString(string value)
         {
@@ -57,6 +66,11 @@ namespace PcscDotNet
         unsafe SCardError IPcscProvider.SCardFreeMemory(SCardContext hContext, void* pvMem)
         {
             return SCardFreeMemory(hContext, pvMem);
+        }
+
+        unsafe SCardError IPcscProvider.SCardGetStatusChange(SCardContext hContext, int dwTimeout, void* rgReaderStates, int cReaders)
+        {
+            return SCardGetStatusChange(hContext, dwTimeout, (SCardReaderState*)rgReaderStates, cReaders);
         }
 
         SCardError IPcscProvider.SCardIsValidContext(SCardContext hContext)
