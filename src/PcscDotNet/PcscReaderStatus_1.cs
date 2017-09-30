@@ -14,7 +14,7 @@ namespace PcscDotNet
             var state = src.EventState;
             src.CurrentState = state;
             dest.Atr = src.Atr;
-            dest.EventNumber = (int)((long)state >> 16) & 0x0000FFFF;
+            dest.EventNumber = ((int)state >> 16) & 0x0000FFFF;
             dest.State = state & (SCardReaderStates)0x0000FFFF;
             provider.FreeString(src.Reader);
         }
