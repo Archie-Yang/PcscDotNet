@@ -2,7 +2,7 @@
 
 .NET standard library for accessing *PC/SC* (*Personal Computer/Smart Card*) functions.
 
-> This library provides the generic way for accessing *PC/SC* functions, and you can write your specific provider with [`IPcscProvider`][] interface implementation.
+> This library provides the generic way for accessing *PC/SC* functions, you can write your specific provider with [`IPcscProvider`][] interface implementation.
 
 ---
 
@@ -17,7 +17,7 @@
 
 ## Introduction
 
-The implementations of *PC/SC* enumerations and structures, the declarations of *PC/SC* methods, both are referenced from *Windows Kit*, *MSDN* and *pcsc-lite*.
+The implementations of *PC/SC* enumerations and structures and the declarations of *PC/SC* methods, both are referenced from *Windows Kit*, *MSDN* and *pcsc-lite*.
 
 The main interfaces/classes:
 
@@ -56,12 +56,14 @@ Other methods:
 
 If you want to implement your provider using `WinSCard` or `pcsc-lite`, see the table below, it shows the different definitions between platforms:
 
-| Unmanaged Defined              | *    | `WinSCard` (*Windows*) | `pcsc-lite` (*OS X*) | `pcsc-lite` (*Linux*) |
-| ------------------------------ | ---- | ---------------------- | -------------------- | --------------------- |
-| `DWORD`                        | Size | 4                      | 4                    | Size of Pointer       |
-| `LONG`                         | Size | 4                      | 4                    | Size of Pointer       |
-| `SCARD_READERSTATE`            | Pack | Default                | 1                    | Default               |
-| `rgbAtr` (`SCARD_READERSTATE`) | Size | 36                     | 33                   | 33                    |
+| Unmanaged Defined              | *        | `WinSCard` (*Windows*) | `pcsc-lite` (*OS X*) | `pcsc-lite` (*Linux*) |
+| ------------------------------ | -------- | ---------------------- | -------------------- | --------------------- |
+| *ANSI* Characters              | Encoding | System Locale          | *UTF-8*              | *UTF-8*               |
+| *Unicode* Characters           | Encoding | *Unicode*              | -                    | -                     |
+| `DWORD`                        | Size     | 4                      | 4                    | `sizeof(void*)`       |
+| `LONG`                         | Size     | 4                      | 4                    | `sizeof(void*)`       |
+| `SCARD_READERSTATE`            | Pack     | -                      | 1                    | -                     |
+| `rgbAtr` (`SCARD_READERSTATE`) | Size     | 36                     | 33                   | 33                    |
 
 ### [Pcsc Class](src/PcscDotNet/Pcsc.cs "Go to Source")
 
