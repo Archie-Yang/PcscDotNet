@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.InteropServices;
 
 namespace PcscDotNet
 {
@@ -6,7 +7,7 @@ namespace PcscDotNet
     /// This structure is used by functions for tracking smart cards within readers.
     /// (For Linux.)
     /// </summary>
-    public struct SCardReaderStateLinux
+    public struct SCardReaderStateLinux : ISCardReaderState
     {
         /// <summary>
         /// A pointer to the name of the reader being monitored.
@@ -39,5 +40,56 @@ namespace PcscDotNet
         /// ATR of the inserted card.
         /// </summary>
         public unsafe fixed byte Atr[33];
+
+        unsafe byte[] ISCardReaderState.Atr
+        {
+            get
+            {
+                var atrLength = (int)AtrLength;
+                if (atrLength <= 0) return null;
+                var atr = new byte[atrLength];
+                fixed (byte* fAtr = Atr)
+                {
+                    Marshal.Copy((IntPtr)fAtr, atr, 0, atr.Length);
+                }
+                return atr;
+            }
+        }
+
+        SCardReaderStates ISCardReaderState.CurrentState
+        {
+            get
+            {
+                return (SCardReaderStates)CurrentState;
+            }
+            set
+            {
+                CurrentState = (IntPtr)value;
+            }
+        }
+
+        SCardReaderStates ISCardReaderState.EventState
+        {
+            get
+            {
+                return (SCardReaderStates)EventState;
+            }
+            set
+            {
+                EventState = (IntPtr)value;
+            }
+        }
+
+        unsafe void* ISCardReaderState.Reader
+        {
+            get
+            {
+                return Reader;
+            }
+            set
+            {
+                Reader = value;
+            }
+        }
     }
 }
