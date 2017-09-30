@@ -54,7 +54,7 @@ Other methods:
 - `FreeString`
   > Releases the unmanaged string allocated by `AllocateString`.
 
-If you want to implement your provider using `WinSCard` or `pcsc-lite`, see the table below, it shows the differnet definitions between platforms:
+If you want to implement your provider using `WinSCard` or `pcsc-lite`, see the table below, it shows the different definitions between platforms:
 
 | Unmanaged Defined              | *    | `WinSCard` (*Windows*) | `pcsc-lite` (*OS X*) | `pcsc-lite` (*Linux*) |
 | ------------------------------ | ---- | ---------------------- | -------------------- | --------------------- |
