@@ -25,6 +25,18 @@ namespace PcscDotNet
             return new PcscContext(this, scope);
         }
 
+        public IEnumerable<string> GetReaderGroupNames()
+        {
+            var groupNames = GetReaderGroupNames(SCardContext.Default);
+            if (groupNames == null) yield break;
+            for (int offset = 0, offsetNull, length = groupNames.Length; ;)
+            {
+                if (offset >= length || (offsetNull = groupNames.IndexOf('\0', offset)) <= offset) yield break;
+                yield return groupNames.Substring(offset, offsetNull - offset);
+                offset = offsetNull + 1;
+            }
+        }
+
         public IEnumerable<string> GetReaderNames(SCardReaderGroup group = SCardReaderGroup.NotSpecified)
         {
             return GetReaderNames(group.GetDefinedValue());
@@ -39,6 +51,22 @@ namespace PcscDotNet
                 if (offset >= length || (offsetNull = readerNames.IndexOf('\0', offset)) <= offset) yield break;
                 yield return readerNames.Substring(offset, offsetNull - offset);
                 offset = offsetNull + 1;
+            }
+        }
+
+        internal unsafe string GetReaderGroupNames(SCardContext handle)
+        {
+            var provider = _provider;
+            byte* pGroupNames = null;
+            var charCount = PcscProvider.SCardAutoAllocate;
+            try
+            {
+                provider.SCardListReaderGroups(handle, &pGroupNames, &charCount).ThrowIfNotSuccess();
+                return provider.AllocateString(pGroupNames, charCount);
+            }
+            finally
+            {
+                if (pGroupNames != null) provider.SCardFreeMemory(handle, pGroupNames).ThrowIfNotSuccess();
             }
         }
 

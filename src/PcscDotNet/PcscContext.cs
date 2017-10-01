@@ -60,6 +60,19 @@ namespace PcscDotNet
             return this;
         }
 
+        public IEnumerable<string> GetReaderGroupNames()
+        {
+            if (IsDisposed) throw new ObjectDisposedException(nameof(PcscContext), nameof(GetReaderGroupNames));
+            var groupNames = _pcsc.GetReaderGroupNames(_handle);
+            if (groupNames == null) yield break;
+            for (int offset = 0, offsetNull, length = groupNames.Length; ;)
+            {
+                if (offset >= length || (offsetNull = groupNames.IndexOf('\0', offset)) <= offset) yield break;
+                yield return groupNames.Substring(offset, offsetNull - offset);
+                offset = offsetNull + 1;
+            }
+        }
+
         public IEnumerable<string> GetReaderNames(SCardReaderGroup group = SCardReaderGroup.NotSpecified)
         {
             return GetReaderNames(group.GetDefinedValue());
