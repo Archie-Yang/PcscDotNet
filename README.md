@@ -42,6 +42,7 @@ These are the methods declared with the same name of *PC/SC* functions currently
 - `SCardFreeMemory`
 - `SCardGetStatusChange`
 - `SCardIsValidContext`
+- `SCardListReaderGroups`
 - `SCardListReaders`
 - `SCardReleaseContext`
 
