@@ -6,13 +6,15 @@ namespace PcscDotNet
 {
     public interface IPcscProvider
     {
-        PcscReaderStatus AllocateReaderStatus(PcscContext context, IList<string> readerNames);
+        byte[] AllocateReaderStates(int count);
 
         unsafe void* AllocateString(string value);
 
         unsafe string AllocateString(void* ptr, int length);
 
         unsafe void FreeString(void* ptr);
+
+        unsafe void ReadReaderState(void* pReaderStates, int index, out void* ppReaderName, out SCardReaderStates currentState, out SCardReaderStates eventState, out byte[] atr);
 
         SCardError SCardCancel(SCardContext hContext);
 
@@ -29,5 +31,9 @@ namespace PcscDotNet
         unsafe SCardError SCardListReaders(SCardContext hContext, string mszGroups, void* mszReaders, int* pcchReaders);
 
         SCardError SCardReleaseContext(SCardContext hContext);
+
+        unsafe void WriteReaderState(void* pReaderStates, int index, SCardReaderStates currentState);
+
+        unsafe void WriteReaderState(void* pReaderStates, int index, void* pReaderName);
     }
 }

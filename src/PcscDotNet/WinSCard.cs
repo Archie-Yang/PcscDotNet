@@ -36,9 +36,9 @@ namespace PcscDotNet
         [DllImport(DllName)]
         public static extern SCardError SCardReleaseContext(SCardContext hContext);
 
-        PcscReaderStatus IPcscProvider.AllocateReaderStatus(PcscContext context, IList<string> readerNames)
+        unsafe byte[] IPcscProvider.AllocateReaderStates(int count)
         {
-            return new PcscReaderStatus<SCardReaderState>(context, readerNames);
+            return new byte[count * sizeof(SCardReaderState)];
         }
 
         unsafe void* IPcscProvider.AllocateString(string value)
@@ -54,6 +54,24 @@ namespace PcscDotNet
         unsafe void IPcscProvider.FreeString(void* ptr)
         {
             Marshal.FreeHGlobal((IntPtr)ptr);
+        }
+
+        unsafe void IPcscProvider.ReadReaderState(void* pReaderStates, int index, out void* ppReaderName, out SCardReaderStates currentState, out SCardReaderStates eventState, out byte[] atr)
+        {
+            var pReaderState = ((SCardReaderState*)pReaderStates) + index;
+            ppReaderName = pReaderState->Reader;
+            currentState = pReaderState->CurrentState;
+            eventState = pReaderState->EventState;
+            var atrLength = pReaderState->AtrLength;
+            if (atrLength <= 0)
+            {
+                atr = null;
+            }
+            else
+            {
+                atr = new byte[atrLength];
+                Marshal.Copy((IntPtr)pReaderState->Atr, atr, 0, atrLength);
+            }
         }
 
         SCardError IPcscProvider.SCardCancel(SCardContext hContext)
@@ -94,6 +112,16 @@ namespace PcscDotNet
         SCardError IPcscProvider.SCardReleaseContext(SCardContext hContext)
         {
             return SCardReleaseContext(hContext);
+        }
+
+        unsafe void IPcscProvider.WriteReaderState(void* pReaderStates, int index, SCardReaderStates currentState)
+        {
+            (((SCardReaderState*)pReaderStates) + index)->CurrentState = currentState;
+        }
+
+        unsafe void IPcscProvider.WriteReaderState(void* pReaderStates, int index, void* pReaderName)
+        {
+            (((SCardReaderState*)pReaderStates) + index)->Reader = pReaderName;
         }
     }
 }

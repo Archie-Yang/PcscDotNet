@@ -8,7 +8,7 @@ namespace PcscDotNet
     /// (For OS X.)
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct SCardReaderStateOSX : ISCardReaderState
+    public struct SCardReaderStateOSX
     {
         /// <summary>
         /// A pointer to the name of the reader being monitored.
@@ -41,55 +41,5 @@ namespace PcscDotNet
         /// ATR of the inserted card.
         /// </summary>
         public unsafe fixed byte Atr[33];
-
-        unsafe byte[] ISCardReaderState.Atr
-        {
-            get
-            {
-                if (AtrLength <= 0) return null;
-                var atr = new byte[AtrLength];
-                fixed (byte* fAtr = Atr)
-                {
-                    Marshal.Copy((IntPtr)fAtr, atr, 0, atr.Length);
-                }
-                return atr;
-            }
-        }
-
-        SCardReaderStates ISCardReaderState.CurrentState
-        {
-            get
-            {
-                return CurrentState;
-            }
-            set
-            {
-                CurrentState = value;
-            }
-        }
-
-        SCardReaderStates ISCardReaderState.EventState
-        {
-            get
-            {
-                return EventState;
-            }
-            set
-            {
-                EventState = value;
-            }
-        }
-
-        unsafe void* ISCardReaderState.Reader
-        {
-            get
-            {
-                return Reader;
-            }
-            set
-            {
-                Reader = value;
-            }
-        }
     }
 }

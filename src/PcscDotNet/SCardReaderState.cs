@@ -7,7 +7,7 @@ namespace PcscDotNet
     /// This structure is used by functions for tracking smart cards within readers.
     /// (For Windows.)
     /// </summary>
-    public struct SCardReaderState : ISCardReaderState
+    public struct SCardReaderState
     {
         /// <summary>
         /// A pointer to the name of the reader being monitored.
@@ -40,55 +40,5 @@ namespace PcscDotNet
         /// ATR of the inserted card, with extra alignment bytes.
         /// </summary>
         public unsafe fixed byte Atr[36];
-
-        unsafe byte[] ISCardReaderState.Atr
-        {
-            get
-            {
-                if (AtrLength <= 0) return null;
-                var atr = new byte[AtrLength];
-                fixed (byte* fAtr = Atr)
-                {
-                    Marshal.Copy((IntPtr)fAtr, atr, 0, atr.Length);
-                }
-                return atr;
-            }
-        }
-
-        SCardReaderStates ISCardReaderState.CurrentState
-        {
-            get
-            {
-                return CurrentState;
-            }
-            set
-            {
-                CurrentState = value;
-            }
-        }
-
-        SCardReaderStates ISCardReaderState.EventState
-        {
-            get
-            {
-                return EventState;
-            }
-            set
-            {
-                EventState = value;
-            }
-        }
-
-        unsafe void* ISCardReaderState.Reader
-        {
-            get
-            {
-                return Reader;
-            }
-            set
-            {
-                Reader = value;
-            }
-        }
     }
 }

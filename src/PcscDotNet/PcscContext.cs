@@ -98,12 +98,12 @@ namespace PcscDotNet
 
         public PcscReaderStatus GetStatus(IList<string> readerNames)
         {
-            return _provider.AllocateReaderStatus(this, readerNames).WaitForChanged();
+            return new PcscReaderStatus(this, readerNames).WaitForChanged();
         }
 
         public PcscReaderStatus GetStatus(params string[] readerNames)
         {
-            return _provider.AllocateReaderStatus(this, readerNames).WaitForChanged();
+            return new PcscReaderStatus(this, readerNames).WaitForChanged();
         }
 
         public PcscContext Release()
