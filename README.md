@@ -48,12 +48,16 @@ These are the methods declared with the same name of *PC/SC* functions currently
 
 Other methods:
 
-- `AllocateReaderStatus`
-  > Allocates the instance of `PcscReaderStatus` (`PcscReaderStatus<TISCardReaderState>`) with the specific blittable type of structure which has implemented `ISCardReaderState` interface.
+- `AllocateReaderStates`
+  > Allocates managed byte array which mapped to unmanaged array of `SCARD_READERSTATE` structure.
 - `AllocateString`
   > Allocates string in managed and unmanaged memory.
 - `FreeString`
   > Releases the unmanaged string allocated by `AllocateString`.
+- `ReadReaderState`
+  > Reads values from the specific index of the `SCARD_READERSTATE` array which allocated by `AllocateReaderStates` method.
+- `WriteReaderState`
+  > Writes values to the specific index of the `SCARD_READERSTATE` array which allocated by `AllocateReaderStates` method.
 
 If you want to implement your provider using `WinSCard` or `pcsc-lite`, see the table below, it shows the different definitions between platforms:
 
