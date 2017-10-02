@@ -14,7 +14,7 @@ namespace PcscDotNet
 
         unsafe void FreeString(void* ptr);
 
-        unsafe void ReadReaderState(void* pReaderStates, int index, out void* ppReaderName, out SCardReaderStates currentState, out SCardReaderStates eventState, out byte[] atr);
+        unsafe void ReadReaderState(void* pReaderStates, int index, out void* pReaderName, out SCardReaderStates currentState, out SCardReaderStates eventState, out byte[] atr);
 
         SCardError SCardCancel(SCardContext hContext);
 

@@ -56,10 +56,10 @@ namespace PcscDotNet
             Marshal.FreeHGlobal((IntPtr)ptr);
         }
 
-        unsafe void IPcscProvider.ReadReaderState(void* pReaderStates, int index, out void* ppReaderName, out SCardReaderStates currentState, out SCardReaderStates eventState, out byte[] atr)
+        unsafe void IPcscProvider.ReadReaderState(void* pReaderStates, int index, out void* pReaderName, out SCardReaderStates currentState, out SCardReaderStates eventState, out byte[] atr)
         {
             var pReaderState = ((SCardReaderState*)pReaderStates) + index;
-            ppReaderName = pReaderState->Reader;
+            pReaderName = pReaderState->Reader;
             currentState = pReaderState->CurrentState;
             eventState = pReaderState->EventState;
             var atrLength = pReaderState->AtrLength;
@@ -69,8 +69,7 @@ namespace PcscDotNet
             }
             else
             {
-                atr = new byte[atrLength];
-                Marshal.Copy((IntPtr)pReaderState->Atr, atr, 0, atrLength);
+                Marshal.Copy((IntPtr)pReaderState->Atr, atr = new byte[atrLength], 0, atrLength);
             }
         }
 
