@@ -15,6 +15,12 @@ namespace PcscDotNet
         [DllImport(DllName)]
         public static extern SCardError SCardCancel(SCardContext hContext);
 
+        [DllImport(DllName, CharSet = CharSet.Unicode)]
+        public unsafe static extern SCardError SCardConnect(SCardContext hContext, string szReader, SCardShare dwShareMode, SCardProtocols dwPreferredProtocols, SCardHandle* phCard, SCardProtocols* pdwActiveProtocol);
+
+        [DllImport(DllName)]
+        public static extern SCardError SCardDisconnect(SCardHandle hCard, SCardDisposition dwDisposition);
+
         [DllImport(DllName)]
         public unsafe static extern SCardError SCardEstablishContext(SCardScope dwScope, void* pvReserved1, void* pvReserved2, SCardContext* phContext);
 
@@ -76,6 +82,16 @@ namespace PcscDotNet
         SCardError IPcscProvider.SCardCancel(SCardContext hContext)
         {
             return SCardCancel(hContext);
+        }
+
+        unsafe SCardError IPcscProvider.SCardConnect(SCardContext hContext, string szReader, SCardShare dwShareMode, SCardProtocols dwPreferredProtocols, SCardHandle* phCard, SCardProtocols* pdwActiveProtocol)
+        {
+            return SCardConnect(hContext, szReader, dwShareMode, dwPreferredProtocols, phCard, pdwActiveProtocol);
+        }
+
+        SCardError IPcscProvider.SCardDisconnect(SCardHandle hCard, SCardDisposition dwDisposition)
+        {
+            return SCardDisconnect(hCard, dwDisposition);
         }
 
         unsafe SCardError IPcscProvider.SCardEstablishContext(SCardScope dwScope, void* pvReserved1, void* pvReserved2, SCardContext* phContext)

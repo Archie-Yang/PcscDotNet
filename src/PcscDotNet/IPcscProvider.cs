@@ -18,6 +18,10 @@ namespace PcscDotNet
 
         SCardError SCardCancel(SCardContext hContext);
 
+        unsafe SCardError SCardConnect(SCardContext hContext, string szReader, SCardShare dwShareMode, SCardProtocols dwPreferredProtocols, SCardHandle* phCard, SCardProtocols* pdwActiveProtocol);
+
+        SCardError SCardDisconnect(SCardHandle hCard, SCardDisposition dwDisposition);
+
         unsafe SCardError SCardEstablishContext(SCardScope dwScope, void* pvReserved1, void* pvReserved2, SCardContext* phContext);
 
         unsafe SCardError SCardFreeMemory(SCardContext hContext, void* pvMem);
