@@ -43,20 +43,20 @@ namespace PcscDotNet
 
         public unsafe PcscReaderStatus WaitForChanged(int timeout = Timeout.Infinite)
         {
-            if (_context.IsDisposed) throw new ObjectDisposedException(nameof(PcscContext), nameof(WaitForChanged));
-            var count = Count;
-            if (count == 0) return this;
-            var provider = _context.Pcsc.Provider;
-            fixed (byte* fReaderStates = &_readerStates[0])
+            var context = _context;
+            if (context.IsDisposed) throw new ObjectDisposedException(nameof(PcscContext), nameof(WaitForChanged));
+            fixed (byte* fReaderStates = _readerStates)
             {
                 var pReaderStates = fReaderStates;
+                var count = Count;
+                var provider = context.Pcsc.Provider;
                 try
                 {
                     for (var i = 0; i < count; ++i)
                     {
                         provider.WriteReaderState(pReaderStates, i, (void*)provider.AllocateString(Items[i].ReaderName));
                     }
-                    provider.SCardGetStatusChange(_context.Handle, timeout, pReaderStates, count).ThrowIfNotSuccess();
+                    provider.SCardGetStatusChange(context.Handle, timeout, pReaderStates, count).ThrowIfNotSuccess();
                 }
                 finally
                 {
