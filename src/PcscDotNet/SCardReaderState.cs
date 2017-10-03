@@ -5,7 +5,7 @@ namespace PcscDotNet
 {
     /// <summary>
     /// This structure is used by functions for tracking smart cards within readers.
-    /// (For Windows.)
+    /// (For WinSCard in Windows.)
     /// </summary>
     public struct SCardReaderState
     {

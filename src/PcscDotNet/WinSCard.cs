@@ -5,6 +5,9 @@ using System.Text;
 
 namespace PcscDotNet
 {
+    /// <summary>
+    /// The PC/SC provider of WinSCard in Windows.
+    /// </summary>
     public class WinSCard : IPcscProvider
     {
         /// <summary>

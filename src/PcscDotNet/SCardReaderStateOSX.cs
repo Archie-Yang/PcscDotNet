@@ -5,7 +5,7 @@ namespace PcscDotNet
 {
     /// <summary>
     /// This structure is used by functions for tracking smart cards within readers.
-    /// (For OS X.)
+    /// (For pcsc-lite in OS X.)
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct SCardReaderStateOSX
