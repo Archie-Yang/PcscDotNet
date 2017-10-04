@@ -6,13 +6,11 @@ namespace PcscDotNet
 {
     public class Pcsc
     {
-        private readonly IPcscProvider _provider;
-
-        public IPcscProvider Provider => _provider;
+        public IPcscProvider Provider { get; private set; }
 
         public Pcsc(IPcscProvider provider)
         {
-            _provider = provider;
+            Provider = provider;
         }
 
         public PcscContext CreateContext()
@@ -56,27 +54,25 @@ namespace PcscDotNet
 
         internal unsafe string GetReaderGroupNames(SCardContext handle)
         {
-            var provider = _provider;
             byte* pGroupNames = null;
             var charCount = PcscProvider.SCardAutoAllocate;
             try
             {
-                provider.SCardListReaderGroups(handle, &pGroupNames, &charCount).ThrowIfNotSuccess();
-                return provider.AllocateString(pGroupNames, charCount);
+                Provider.SCardListReaderGroups(handle, &pGroupNames, &charCount).ThrowIfNotSuccess();
+                return Provider.AllocateString(pGroupNames, charCount);
             }
             finally
             {
-                if (pGroupNames != null) provider.SCardFreeMemory(handle, pGroupNames).ThrowIfNotSuccess();
+                if (pGroupNames != null) Provider.SCardFreeMemory(handle, pGroupNames).ThrowIfNotSuccess();
             }
         }
 
         internal unsafe string GetReaderNames(SCardContext handle, string group)
         {
             string readerNames = null;
-            var provider = _provider;
             byte* pReaderNames;
             var charCount = PcscProvider.SCardAutoAllocate;
-            var err = provider.SCardListReaders(handle, group, &pReaderNames, &charCount);
+            var err = Provider.SCardListReaders(handle, group, &pReaderNames, &charCount);
             try
             {
                 switch (err)
@@ -90,7 +86,7 @@ namespace PcscDotNet
                            In ANSI, `charCount` means the byte count of string.
                            In Unicode, `charCount` means the number of Unicode characters of string.
                         */
-                        readerNames = provider.AllocateString(pReaderNames, charCount);
+                        readerNames = Provider.AllocateString(pReaderNames, charCount);
                         break;
                     default:
                         err.Throw();
@@ -99,7 +95,7 @@ namespace PcscDotNet
             }
             finally
             {
-                if (pReaderNames != null) provider.SCardFreeMemory(handle, pReaderNames).ThrowIfNotSuccess();
+                if (pReaderNames != null) Provider.SCardFreeMemory(handle, pReaderNames).ThrowIfNotSuccess();
             }
             return readerNames;
         }

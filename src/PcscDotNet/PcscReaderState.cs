@@ -6,8 +6,13 @@ namespace PcscDotNet
 
         public int EventNumber { get; internal set; }
 
-        public string ReaderName { get; internal set; }
+        public string ReaderName { get; private set; }
 
         public SCardReaderStates State { get; internal set; }
+
+        public PcscReaderState(string readerName)
+        {
+            ReaderName = readerName;
+        }
     }
 }

@@ -14,25 +14,25 @@ namespace PcscDotNet
         /// </summary>
         public const string PnPReaderName = "\\\\?PnP?\\Notification";
 
-        private readonly PcscContext _context;
-
         private readonly byte[] _readerStates;
 
-        public PcscContext Context => _context;
+        public PcscContext Context { get; private set; }
+
+        public IPcscProvider Provider { get; private set; }
 
         public PcscReaderStatus(PcscContext context, IList<string> readerNames) : base(new List<PcscReaderState>(readerNames.Count))
         {
-            _context = context;
-            _readerStates = context.Pcsc.Provider.AllocateReaderStates(readerNames.Count);
+            Context = context;
+            _readerStates = (Provider = context.Provider).AllocateReaderStates(readerNames.Count);
             foreach (var readerName in readerNames)
             {
-                Items.Add(new PcscReaderState() { ReaderName = readerName });
+                Items.Add(new PcscReaderState(readerName));
             }
         }
 
         public void Cancel()
         {
-            _context.Cancel();
+            Context.Cancel();
         }
 
         public PcscReaderStatus Do(PcscReaderStatusAction action)
@@ -43,32 +43,29 @@ namespace PcscDotNet
 
         public unsafe PcscReaderStatus WaitForChanged(int timeout = Timeout.Infinite)
         {
-            var context = _context;
-            if (context.IsDisposed) throw new ObjectDisposedException(nameof(PcscContext), nameof(WaitForChanged));
+            if (Context.IsDisposed) throw new ObjectDisposedException(nameof(PcscContext), nameof(WaitForChanged));
             fixed (byte* fReaderStates = _readerStates)
             {
                 var pReaderStates = fReaderStates;
-                var count = Count;
-                var provider = context.Pcsc.Provider;
                 try
                 {
-                    for (var i = 0; i < count; ++i)
+                    for (var i = 0; i < Count; ++i)
                     {
-                        provider.WriteReaderState(pReaderStates, i, (void*)provider.AllocateString(Items[i].ReaderName));
+                        Provider.WriteReaderState(pReaderStates, i, (void*)Provider.AllocateString(Items[i].ReaderName));
                     }
-                    provider.SCardGetStatusChange(context.Handle, timeout, pReaderStates, count).ThrowIfNotSuccess();
+                    Provider.SCardGetStatusChange(Context.Handle, timeout, pReaderStates, Count).ThrowIfNotSuccess();
                 }
                 finally
                 {
-                    for (var i = 0; i < count; ++i)
+                    for (var i = 0; i < Count; ++i)
                     {
-                        provider.ReadReaderState(pReaderStates, i, out void* pReaderName, out SCardReaderStates currentState, out SCardReaderStates eventState, out byte[] atr);
-                        provider.WriteReaderState(pReaderStates, i, eventState);
+                        Provider.ReadReaderState(pReaderStates, i, out void* pReaderName, out SCardReaderStates currentState, out SCardReaderStates eventState, out byte[] atr);
+                        Provider.WriteReaderState(pReaderStates, i, eventState);
                         var readerState = Items[i];
                         readerState.Atr = atr;
                         readerState.EventNumber = ((int)eventState >> 16) & 0x0000FFFF;
                         readerState.State = eventState & (SCardReaderStates)0x0000FFFF;
-                        provider.FreeString(pReaderName);
+                        Provider.FreeString(pReaderName);
                     }
                 }
             }

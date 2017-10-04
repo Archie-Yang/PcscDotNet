@@ -6,24 +6,20 @@ namespace PcscDotNet
 {
     public class PcscContext : IDisposable
     {
-        private SCardContext _handle;
-
-        private readonly Pcsc _pcsc;
-
-        private readonly IPcscProvider _provider;
-
-        public SCardContext Handle => _handle;
+        public SCardContext Handle { get; private set; }
 
         public bool IsDisposed { get; private set; } = false;
 
-        public bool IsEstablished => _handle.HasValue;
+        public bool IsEstablished => Handle.HasValue;
 
-        public Pcsc Pcsc => _pcsc;
+        public Pcsc Pcsc { get; private set; }
+
+        public IPcscProvider Provider { get; private set; }
 
         public PcscContext(Pcsc pcsc)
         {
-            _pcsc = pcsc;
-            _provider = pcsc.Provider;
+            Pcsc = pcsc;
+            Provider = pcsc.Provider;
         }
 
         public PcscContext(Pcsc pcsc, SCardScope scope) : this(pcsc)
@@ -39,7 +35,7 @@ namespace PcscDotNet
         public void Cancel()
         {
             if (IsDisposed) throw new ObjectDisposedException(nameof(PcscContext), nameof(Cancel));
-            _provider.SCardCancel(_handle).ThrowIfNotSuccess();
+            Provider.SCardCancel(Handle).ThrowIfNotSuccess();
         }
 
         public void Dispose()
@@ -55,15 +51,15 @@ namespace PcscDotNet
             if (IsDisposed) throw new ObjectDisposedException(nameof(PcscContext), nameof(Establish));
             if (IsEstablished) throw new InvalidOperationException("Context has been established.");
             SCardContext handle;
-            _provider.SCardEstablishContext(scope, null, null, &handle).ThrowIfNotSuccess();
-            _handle = handle;
+            Provider.SCardEstablishContext(scope, null, null, &handle).ThrowIfNotSuccess();
+            Handle = handle;
             return this;
         }
 
         public IEnumerable<string> GetReaderGroupNames()
         {
             if (IsDisposed) throw new ObjectDisposedException(nameof(PcscContext), nameof(GetReaderGroupNames));
-            var groupNames = _pcsc.GetReaderGroupNames(_handle);
+            var groupNames = Pcsc.GetReaderGroupNames(Handle);
             if (groupNames == null) yield break;
             for (int offset = 0, offsetNull, length = groupNames.Length; ;)
             {
@@ -81,7 +77,7 @@ namespace PcscDotNet
         public IEnumerable<string> GetReaderNames(string group)
         {
             if (IsDisposed) throw new ObjectDisposedException(nameof(PcscContext), nameof(GetReaderNames));
-            var readerNames = _pcsc.GetReaderNames(_handle, group);
+            var readerNames = Pcsc.GetReaderNames(Handle, group);
             if (readerNames == null) yield break;
             for (int offset = 0, offsetNull, length = readerNames.Length; ;)
             {
@@ -116,15 +112,15 @@ namespace PcscDotNet
         public PcscContext Validate()
         {
             if (IsDisposed) throw new ObjectDisposedException(nameof(PcscContext), nameof(Validate));
-            _provider.SCardIsValidContext(_handle).ThrowIfNotSuccess();
+            Provider.SCardIsValidContext(Handle).ThrowIfNotSuccess();
             return this;
         }
 
         private void ReleaseInternal()
         {
             if (!IsEstablished) return;
-            _provider.SCardReleaseContext(_handle).ThrowIfNotSuccess();
-            _handle = SCardContext.Default;
+            Provider.SCardReleaseContext(Handle).ThrowIfNotSuccess();
+            Handle = SCardContext.Default;
         }
     }
 }
