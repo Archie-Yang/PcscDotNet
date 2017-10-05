@@ -97,6 +97,11 @@ namespace PcscDotNet
             return new PcscReaderStatus(this, readerNames).WaitForChanged(onException: onException);
         }
 
+        public PcscReaderStatus GetStatus(string readerName, PcscExceptionHandler onException = null)
+        {
+            return GetStatus(new string[] { readerName }, onException);
+        }
+
         public PcscContext Release(PcscExceptionHandler onException = null)
         {
             if (IsDisposed) throw new ObjectDisposedException(nameof(PcscContext), nameof(Release));
