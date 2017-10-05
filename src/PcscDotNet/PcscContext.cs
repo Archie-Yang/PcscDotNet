@@ -22,9 +22,9 @@ namespace PcscDotNet
             Provider = pcsc.Provider;
         }
 
-        public PcscContext(Pcsc pcsc, SCardScope scope) : this(pcsc)
+        public PcscContext(Pcsc pcsc, SCardScope scope, PcscExceptionHandler onException = null) : this(pcsc)
         {
-            Establish(scope);
+            Establish(scope, onException);
         }
 
         ~PcscContext()
@@ -32,10 +32,10 @@ namespace PcscDotNet
             Dispose();
         }
 
-        public void Cancel()
+        public void Cancel(PcscExceptionHandler onException = null)
         {
             if (IsDisposed) throw new ObjectDisposedException(nameof(PcscContext), nameof(Cancel));
-            Provider.SCardCancel(Handle).ThrowIfNotSuccess();
+            Provider.SCardCancel(Handle).ThrowIfNotSuccess(onException);
         }
 
         public void Dispose()
@@ -46,20 +46,20 @@ namespace PcscDotNet
             GC.SuppressFinalize(this);
         }
 
-        public unsafe PcscContext Establish(SCardScope scope)
+        public unsafe PcscContext Establish(SCardScope scope, PcscExceptionHandler onException = null)
         {
             if (IsDisposed) throw new ObjectDisposedException(nameof(PcscContext), nameof(Establish));
             if (IsEstablished) throw new InvalidOperationException("Context has been established.");
             SCardContext handle;
-            Provider.SCardEstablishContext(scope, null, null, &handle).ThrowIfNotSuccess();
+            Provider.SCardEstablishContext(scope, null, null, &handle).ThrowIfNotSuccess(onException);
             Handle = handle;
             return this;
         }
 
-        public IEnumerable<string> GetReaderGroupNames()
+        public IEnumerable<string> GetReaderGroupNames(PcscExceptionHandler onException = null)
         {
             if (IsDisposed) throw new ObjectDisposedException(nameof(PcscContext), nameof(GetReaderGroupNames));
-            var groupNames = Pcsc.GetReaderGroupNames(Handle);
+            var groupNames = Pcsc.GetReaderGroupNames(Handle, onException);
             if (groupNames == null) yield break;
             for (int offset = 0, offsetNull, length = groupNames.Length; ;)
             {
@@ -69,15 +69,15 @@ namespace PcscDotNet
             }
         }
 
-        public IEnumerable<string> GetReaderNames(SCardReaderGroup group = SCardReaderGroup.NotSpecified)
+        public IEnumerable<string> GetReaderNames(SCardReaderGroup group = SCardReaderGroup.NotSpecified, PcscExceptionHandler onException = null)
         {
-            return GetReaderNames(group.GetDefinedValue());
+            return GetReaderNames(group.GetDefinedValue(), onException);
         }
 
-        public IEnumerable<string> GetReaderNames(string group)
+        public IEnumerable<string> GetReaderNames(string group, PcscExceptionHandler onException = null)
         {
             if (IsDisposed) throw new ObjectDisposedException(nameof(PcscContext), nameof(GetReaderNames));
-            var readerNames = Pcsc.GetReaderNames(Handle, group);
+            var readerNames = Pcsc.GetReaderNames(Handle, group, onException);
             if (readerNames == null) yield break;
             for (int offset = 0, offsetNull, length = readerNames.Length; ;)
             {
@@ -87,39 +87,34 @@ namespace PcscDotNet
             }
         }
 
-        public PcscReaderStatus GetStatus(IEnumerable<string> readerNames)
+        public PcscReaderStatus GetStatus(IEnumerable<string> readerNames, PcscExceptionHandler onException = null)
         {
-            return GetStatus(readerNames.ToList());
+            return GetStatus(readerNames.ToList(), onException);
         }
 
-        public PcscReaderStatus GetStatus(IList<string> readerNames)
+        public PcscReaderStatus GetStatus(IList<string> readerNames, PcscExceptionHandler onException = null)
         {
-            return new PcscReaderStatus(this, readerNames).WaitForChanged();
+            return new PcscReaderStatus(this, readerNames).WaitForChanged(onException: onException);
         }
 
-        public PcscReaderStatus GetStatus(params string[] readerNames)
-        {
-            return new PcscReaderStatus(this, readerNames).WaitForChanged();
-        }
-
-        public PcscContext Release()
+        public PcscContext Release(PcscExceptionHandler onException = null)
         {
             if (IsDisposed) throw new ObjectDisposedException(nameof(PcscContext), nameof(Release));
-            ReleaseInternal();
+            ReleaseInternal(onException);
             return this;
         }
 
-        public PcscContext Validate()
+        public PcscContext Validate(PcscExceptionHandler onException = null)
         {
             if (IsDisposed) throw new ObjectDisposedException(nameof(PcscContext), nameof(Validate));
-            Provider.SCardIsValidContext(Handle).ThrowIfNotSuccess();
+            Provider.SCardIsValidContext(Handle).ThrowIfNotSuccess(onException);
             return this;
         }
 
-        private void ReleaseInternal()
+        private void ReleaseInternal(PcscExceptionHandler onException = null)
         {
             if (!IsEstablished) return;
-            Provider.SCardReleaseContext(Handle).ThrowIfNotSuccess();
+            Provider.SCardReleaseContext(Handle).ThrowIfNotSuccess(onException);
             Handle = SCardContext.Default;
         }
     }

@@ -18,14 +18,14 @@ namespace PcscDotNet
             return new PcscContext(this);
         }
 
-        public PcscContext EstablishContext(SCardScope scope)
+        public PcscContext EstablishContext(SCardScope scope, PcscExceptionHandler onException = null)
         {
-            return new PcscContext(this, scope);
+            return new PcscContext(this, scope, onException);
         }
 
-        public IEnumerable<string> GetReaderGroupNames()
+        public IEnumerable<string> GetReaderGroupNames(PcscExceptionHandler onException = null)
         {
-            var groupNames = GetReaderGroupNames(SCardContext.Default);
+            var groupNames = GetReaderGroupNames(SCardContext.Default, onException);
             if (groupNames == null) yield break;
             for (int offset = 0, offsetNull, length = groupNames.Length; ;)
             {
@@ -35,14 +35,14 @@ namespace PcscDotNet
             }
         }
 
-        public IEnumerable<string> GetReaderNames(SCardReaderGroup group = SCardReaderGroup.NotSpecified)
+        public IEnumerable<string> GetReaderNames(SCardReaderGroup group = SCardReaderGroup.NotSpecified, PcscExceptionHandler onException = null)
         {
-            return GetReaderNames(group.GetDefinedValue());
+            return GetReaderNames(group.GetDefinedValue(), onException);
         }
 
-        public IEnumerable<string> GetReaderNames(string group)
+        public IEnumerable<string> GetReaderNames(string group, PcscExceptionHandler onException = null)
         {
-            var readerNames = GetReaderNames(SCardContext.Default, group);
+            var readerNames = GetReaderNames(SCardContext.Default, group, onException);
             if (readerNames == null) yield break;
             for (int offset = 0, offsetNull, length = readerNames.Length; ;)
             {
@@ -52,22 +52,22 @@ namespace PcscDotNet
             }
         }
 
-        internal unsafe string GetReaderGroupNames(SCardContext handle)
+        internal unsafe string GetReaderGroupNames(SCardContext handle, PcscExceptionHandler onException)
         {
             byte* pGroupNames = null;
             var charCount = PcscProvider.SCardAutoAllocate;
             try
             {
-                Provider.SCardListReaderGroups(handle, &pGroupNames, &charCount).ThrowIfNotSuccess();
+                Provider.SCardListReaderGroups(handle, &pGroupNames, &charCount).ThrowIfNotSuccess(onException);
                 return Provider.AllocateString(pGroupNames, charCount);
             }
             finally
             {
-                if (pGroupNames != null) Provider.SCardFreeMemory(handle, pGroupNames).ThrowIfNotSuccess();
+                if (pGroupNames != null) Provider.SCardFreeMemory(handle, pGroupNames).ThrowIfNotSuccess(onException);
             }
         }
 
-        internal unsafe string GetReaderNames(SCardContext handle, string group)
+        internal unsafe string GetReaderNames(SCardContext handle, string group, PcscExceptionHandler onException)
         {
             string readerNames = null;
             byte* pReaderNames;
@@ -89,13 +89,13 @@ namespace PcscDotNet
                         readerNames = Provider.AllocateString(pReaderNames, charCount);
                         break;
                     default:
-                        err.Throw();
+                        err.Throw(onException);
                         break;
                 }
             }
             finally
             {
-                if (pReaderNames != null) Provider.SCardFreeMemory(handle, pReaderNames).ThrowIfNotSuccess();
+                if (pReaderNames != null) Provider.SCardFreeMemory(handle, pReaderNames).ThrowIfNotSuccess(onException);
             }
             return readerNames;
         }

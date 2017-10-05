@@ -12,24 +12,24 @@ namespace PcscDotNet
             return Instance.CreateContext();
         }
 
-        public static PcscContext EstablishContext(SCardScope scope)
+        public static PcscContext EstablishContext(SCardScope scope, PcscExceptionHandler onException = null)
         {
-            return Instance.EstablishContext(scope);
+            return Instance.EstablishContext(scope, onException);
         }
 
-        public static IEnumerable<string> GetReaderGroupNames()
+        public static IEnumerable<string> GetReaderGroupNames(PcscExceptionHandler onException = null)
         {
-            return Instance.GetReaderGroupNames();
+            return Instance.GetReaderGroupNames(onException);
         }
 
-        public static IEnumerable<string> GetReaderNames(SCardReaderGroup group = SCardReaderGroup.NotSpecified)
+        public static IEnumerable<string> GetReaderNames(SCardReaderGroup group = SCardReaderGroup.NotSpecified, PcscExceptionHandler onException = null)
         {
-            return Instance.GetReaderNames(group.GetDefinedValue());
+            return Instance.GetReaderNames(group.GetDefinedValue(), onException);
         }
 
-        public static IEnumerable<string> GetReaderNames(string group)
+        public static IEnumerable<string> GetReaderNames(string group, PcscExceptionHandler onException = null)
         {
-            return Instance.GetReaderNames(group);
+            return Instance.GetReaderNames(group, onException);
         }
     }
 }

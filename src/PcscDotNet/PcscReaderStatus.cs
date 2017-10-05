@@ -30,9 +30,9 @@ namespace PcscDotNet
             }
         }
 
-        public void Cancel()
+        public void Cancel(PcscExceptionHandler onException = null)
         {
-            Context.Cancel();
+            Context.Cancel(onException);
         }
 
         public PcscReaderStatus Do(PcscReaderStatusAction action)
@@ -41,7 +41,7 @@ namespace PcscDotNet
             return this;
         }
 
-        public unsafe PcscReaderStatus WaitForChanged(int timeout = Timeout.Infinite)
+        public unsafe PcscReaderStatus WaitForChanged(int timeout = Timeout.Infinite, PcscExceptionHandler onException = null)
         {
             if (Context.IsDisposed) throw new ObjectDisposedException(nameof(PcscContext), nameof(WaitForChanged));
             fixed (byte* fReaderStates = _readerStates)
@@ -53,7 +53,7 @@ namespace PcscDotNet
                     {
                         Provider.WriteReaderState(pReaderStates, i, (void*)Provider.AllocateString(Items[i].ReaderName));
                     }
-                    Provider.SCardGetStatusChange(Context.Handle, timeout, pReaderStates, Count).ThrowIfNotSuccess();
+                    Provider.SCardGetStatusChange(Context.Handle, timeout, pReaderStates, Count).ThrowIfNotSuccess(onException);
                 }
                 finally
                 {
