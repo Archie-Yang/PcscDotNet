@@ -3,11 +3,13 @@ using System.ComponentModel;
 
 namespace PcscDotNet
 {
-    public class PcscException : Win32Exception
+    public delegate void PcscExceptionHandler(PcscException error);
+
+    public sealed class PcscException : Win32Exception
     {
         public SCardError Error => (SCardError)NativeErrorCode;
 
-        public PcscException() { }
+        public bool ThrowIt { get; set; } = true;
 
         public PcscException(int error) : base(error) { }
 

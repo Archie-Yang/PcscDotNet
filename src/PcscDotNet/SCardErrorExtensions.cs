@@ -8,24 +8,22 @@ namespace PcscDotNet
     /// </summary>
     public static class SCardErrorExtensions
     {
-        public static void Throw(this SCardError error)
+        public static void Throw(this SCardError error, PcscExceptionHandler onException = null)
         {
-            throw new PcscException(error);
-        }
-
-        public static void ThrowIfAny(this SCardError error, params SCardError[] errors)
-        {
-            if (errors?.Contains(error) == true)
+            var exception = new PcscException(error);
+            if (onException != null)
             {
-                throw new PcscException(error);
+                onException(exception);
+                if (!exception.ThrowIt) return;
             }
+            throw exception;
         }
 
-        public static void ThrowIfNotSuccess(this SCardError error)
+        public static void ThrowIfNotSuccess(this SCardError error, PcscExceptionHandler onException = null)
         {
             if (error != SCardError.Successs)
             {
-                throw new PcscException(error);
+                Throw(error, onException);
             }
         }
     }
