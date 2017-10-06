@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Text;
 
 namespace PcscDotNet
 {
@@ -41,6 +40,9 @@ namespace PcscDotNet
 
         [DllImport(DllName, CharSet = CharSet.Unicode)]
         public unsafe static extern SCardError SCardListReaders(SCardContext hContext, string mszGroups, void* mszReaders, int* pcchReaders);
+
+        [DllImport(DllName)]
+        public unsafe static extern SCardError SCardReconnect(SCardHandle hCard, SCardShare dwShareMode, SCardProtocols dwPreferredProtocols, SCardDisposition dwInitialization, SCardProtocols* pdwActiveProtocol);
 
         [DllImport(DllName)]
         public static extern SCardError SCardReleaseContext(SCardContext hContext);
@@ -125,6 +127,11 @@ namespace PcscDotNet
         unsafe SCardError IPcscProvider.SCardListReaders(SCardContext hContext, string mszGroups, void* mszReaders, int* pcchReaders)
         {
             return SCardListReaders(hContext, mszGroups, mszReaders, pcchReaders);
+        }
+
+        unsafe SCardError IPcscProvider.SCardReconnect(SCardHandle hCard, SCardShare dwShareMode, SCardProtocols dwPreferredProtocols, SCardDisposition dwInitialization, SCardProtocols* pdwActiveProtocol)
+        {
+            return SCardReconnect(hCard, dwShareMode, dwPreferredProtocols, dwInitialization, pdwActiveProtocol);
         }
 
         SCardError IPcscProvider.SCardReleaseContext(SCardContext hContext)

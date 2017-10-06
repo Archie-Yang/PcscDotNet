@@ -34,6 +34,8 @@ namespace PcscDotNet
 
         unsafe SCardError SCardListReaders(SCardContext hContext, string mszGroups, void* mszReaders, int* pcchReaders);
 
+        unsafe SCardError SCardReconnect(SCardHandle hCard, SCardShare dwShareMode, SCardProtocols dwPreferredProtocols, SCardDisposition dwInitialization, SCardProtocols* pdwActiveProtocol);
+
         SCardError SCardReleaseContext(SCardContext hContext);
 
         unsafe void WriteReaderState(void* pReaderStates, int index, SCardReaderStates currentState);
