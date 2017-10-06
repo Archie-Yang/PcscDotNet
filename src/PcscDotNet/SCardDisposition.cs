@@ -14,11 +14,11 @@ namespace PcscDotNet
         /// </summary>
         Leave = 0,
         /// <summary>
-        /// Reset the card on close.
+        /// Reset the card on close (warm reset).
         /// </summary>
         Reset = 1,
         /// <summary>
-        /// Power down the card on close.
+        /// Power down the card on close (cold reset).
         /// </summary>
         Unpower = 2
     }
