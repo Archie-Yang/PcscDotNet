@@ -46,6 +46,7 @@ These are the methods declared with the same name of *PC/SC* functions currently
 - `SCardIsValidContext`
 - `SCardListReaderGroups`
 - `SCardListReaders`
+- `SCardReconnect`
 - `SCardReleaseContext`
 
 Other methods:
