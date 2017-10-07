@@ -12,19 +12,11 @@ namespace PcscDotNet
 
         public bool IsEstablished => Handle.HasValue;
 
-        public Pcsc Pcsc { get; private set; }
-
         public IPcscProvider Provider { get; private set; }
 
-        public PcscContext(Pcsc pcsc)
+        public PcscContext(IPcscProvider provider)
         {
-            Pcsc = pcsc;
-            Provider = pcsc.Provider;
-        }
-
-        public PcscContext(Pcsc pcsc, SCardScope scope, PcscExceptionHandler onException = null) : this(pcsc)
-        {
-            Establish(scope, onException);
+            Provider = provider;
         }
 
         ~PcscContext()
@@ -59,7 +51,7 @@ namespace PcscDotNet
         public IEnumerable<string> GetReaderGroupNames(PcscExceptionHandler onException = null)
         {
             if (IsDisposed) throw new ObjectDisposedException(nameof(PcscContext), nameof(GetReaderGroupNames));
-            var groupNames = Pcsc.GetReaderGroupNames(Handle, onException);
+            var groupNames = Pcsc.GetReaderGroupNames(Provider, Handle, onException);
             if (groupNames == null) yield break;
             for (int offset = 0, offsetNull, length = groupNames.Length; ;)
             {
@@ -77,7 +69,7 @@ namespace PcscDotNet
         public IEnumerable<string> GetReaderNames(string group, PcscExceptionHandler onException = null)
         {
             if (IsDisposed) throw new ObjectDisposedException(nameof(PcscContext), nameof(GetReaderNames));
-            var readerNames = Pcsc.GetReaderNames(Handle, group, onException);
+            var readerNames = Pcsc.GetReaderNames(Provider, Handle, group, onException);
             if (readerNames == null) yield break;
             for (int offset = 0, offsetNull, length = readerNames.Length; ;)
             {
