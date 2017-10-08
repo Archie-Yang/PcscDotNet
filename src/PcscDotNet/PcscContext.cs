@@ -30,6 +30,16 @@ namespace PcscDotNet
             Provider.SCardCancel(Handle).ThrowIfNotSuccess(onException);
         }
 
+        public PcscConnection Connect(string readerName, SCardShare shareMode, SCardProtocols protocols, PcscExceptionHandler onException = null)
+        {
+            return CreateConnection(readerName).Connect(shareMode, protocols, onException);
+        }
+
+        public PcscConnection CreateConnection(string readerName)
+        {
+            return new PcscConnection(this, readerName);
+        }
+
         public void Dispose()
         {
             if (IsDisposed) return;
