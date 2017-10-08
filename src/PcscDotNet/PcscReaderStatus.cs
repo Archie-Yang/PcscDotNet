@@ -20,14 +20,14 @@ namespace PcscDotNet
 
         public IPcscProvider Provider { get; private set; }
 
-        public PcscReaderStatus(PcscContext context, IList<string> readerNames) : base(new List<PcscReaderState>(readerNames.Count))
+        public PcscReaderStatus(PcscContext context, IEnumerable<string> readerNames) : base(new List<PcscReaderState>())
         {
             Context = context;
-            _readerStates = (Provider = context.Provider).AllocateReaderStates(readerNames.Count);
             foreach (var readerName in readerNames)
             {
                 Items.Add(new PcscReaderState(readerName));
             }
+            _readerStates = (Provider = context.Provider).AllocateReaderStates(Items.Count);
         }
 
         public void Cancel(PcscExceptionHandler onException = null)

@@ -89,19 +89,14 @@ namespace PcscDotNet
             }
         }
 
+        public PcscReaderStatus GetStatus(params string[] readerNames)
+        {
+            return new PcscReaderStatus(this, readerNames).WaitForChanged();
+        }
+
         public PcscReaderStatus GetStatus(IEnumerable<string> readerNames, PcscExceptionHandler onException = null)
         {
-            return GetStatus(readerNames.ToList(), onException);
-        }
-
-        public PcscReaderStatus GetStatus(IList<string> readerNames, PcscExceptionHandler onException = null)
-        {
             return new PcscReaderStatus(this, readerNames).WaitForChanged(onException: onException);
-        }
-
-        public PcscReaderStatus GetStatus(string readerName, PcscExceptionHandler onException = null)
-        {
-            return GetStatus(new string[] { readerName }, onException);
         }
 
         public PcscContext Release(PcscExceptionHandler onException = null)
