@@ -53,11 +53,10 @@ namespace PcscDotNet
         [DllImport(DllName)]
         public static extern SCardError SCardReleaseContext(SCardContext hContext);
 
-        unsafe byte[] IPcscProvider.AllocateIORequest(ref int length)
+        unsafe byte[] IPcscProvider.AllocateIORequest(int informationLength)
         {
-            length += sizeof(SCardIORequest);
-            length += (length % sizeof(void*));
-            return new byte[length];
+            informationLength += sizeof(SCardIORequest);
+            return new byte[informationLength + (informationLength % sizeof(void*))];
         }
 
         unsafe byte[] IPcscProvider.AllocateReaderStates(int count)
@@ -178,11 +177,11 @@ namespace PcscDotNet
             return SCardReleaseContext(hContext);
         }
 
-        unsafe void IPcscProvider.WriteIORequest(void* pIORequest, SCardProtocols protocol, int length, byte[] information)
+        unsafe void IPcscProvider.WriteIORequest(void* pIORequest, SCardProtocols protocol, int totalLength, byte[] information)
         {
             var p = (SCardIORequest*)pIORequest;
             p->Protocol = protocol;
-            p->PciLength = length;
+            p->PciLength = totalLength;
             if (information.Length > 0)
             {
                 Marshal.Copy(information, 0, (IntPtr)(p + 1), information.Length);

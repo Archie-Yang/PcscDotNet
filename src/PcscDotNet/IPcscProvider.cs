@@ -6,7 +6,7 @@ namespace PcscDotNet
 {
     public interface IPcscProvider
     {
-        byte[] AllocateIORequest(ref int length);
+        byte[] AllocateIORequest(int informationLength);
 
         byte[] AllocateReaderStates(int count);
 
@@ -46,7 +46,7 @@ namespace PcscDotNet
 
         SCardError SCardReleaseContext(SCardContext hContext);
 
-        unsafe void WriteIORequest(void* pIORequest, SCardProtocols protocol, int length, byte[] information);
+        unsafe void WriteIORequest(void* pIORequest, SCardProtocols protocol, int totalLength, byte[] information);
 
         unsafe void WriteReaderState(void* pReaderStates, int index, SCardReaderStates currentState);
 
