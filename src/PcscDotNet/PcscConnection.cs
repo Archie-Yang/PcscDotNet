@@ -31,6 +31,7 @@ namespace PcscDotNet
 
         public unsafe PcscConnection Connect(SCardShare shareMode, SCardProtocols protocols, PcscExceptionHandler onException = null)
         {
+            if (IsDisposed) throw new ObjectDisposedException(nameof(PcscConnection), nameof(Connect));
             SCardHandle handle;
             Provider.SCardConnect(Context.Handle, ReaderName, shareMode, protocols, &handle, &protocols).ThrowIfNotSuccess(onException);
             Handle = handle;
@@ -51,6 +52,14 @@ namespace PcscDotNet
             DisconnectInternal();
             IsDisposed = true;
             GC.SuppressFinalize(this);
+        }
+
+        public unsafe PcscConnection Reconnect(SCardShare shareMode, SCardProtocols protocols, SCardDisposition initializationDisposition = SCardDisposition.Leave, PcscExceptionHandler onException = null)
+        {
+            if (IsDisposed) throw new ObjectDisposedException(nameof(PcscConnection), nameof(Reconnect));
+            Provider.SCardReconnect(Handle, shareMode, protocols, initializationDisposition, &protocols).ThrowIfNotSuccess(onException);
+            Protocols = protocols;
+            return this;
         }
 
         private void DisconnectInternal(SCardDisposition disposition = SCardDisposition.Leave, PcscExceptionHandler onException = null)
