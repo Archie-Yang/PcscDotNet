@@ -53,6 +53,9 @@ namespace PcscDotNet
         [DllImport(DllName)]
         public static extern SCardError SCardReleaseContext(SCardContext hContext);
 
+        [DllImport(DllName)]
+        public unsafe static extern SCardError SCardTransmit(SCardHandle hCard, SCardIORequest* pioSendPci, byte* pbSendBuffer, int cbSendLength, SCardIORequest* pioRecvPci, byte* pbRecvBuffer, int* pcbRecvLength);
+
         unsafe byte[] IPcscProvider.AllocateIORequest(int informationLength)
         {
             informationLength += sizeof(SCardIORequest);
@@ -175,6 +178,11 @@ namespace PcscDotNet
         SCardError IPcscProvider.SCardReleaseContext(SCardContext hContext)
         {
             return SCardReleaseContext(hContext);
+        }
+
+        unsafe SCardError IPcscProvider.SCardTransmit(SCardHandle hCard, void* pioSendPci, byte* pbSendBuffer, int cbSendLength, void* pioRecvPci, byte* pbRecvBuffer, int* pcbRecvLength)
+        {
+            return SCardTransmit(hCard, (SCardIORequest*)pioSendPci, pbSendBuffer, cbSendLength, (SCardIORequest*)pioRecvPci, pbRecvBuffer, pcbRecvLength);
         }
 
         unsafe void IPcscProvider.WriteIORequest(void* pIORequest, SCardProtocols protocol, int totalLength, byte[] information)

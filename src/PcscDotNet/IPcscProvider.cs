@@ -46,6 +46,8 @@ namespace PcscDotNet
 
         SCardError SCardReleaseContext(SCardContext hContext);
 
+        unsafe SCardError SCardTransmit(SCardHandle hCard, void* pioSendPci, byte* pbSendBuffer, int cbSendLength, void* pioRecvPci, byte* pbRecvBuffer, int* pcbRecvLength);
+
         unsafe void WriteIORequest(void* pIORequest, SCardProtocols protocol, int totalLength, byte[] information);
 
         unsafe void WriteReaderState(void* pReaderStates, int index, SCardReaderStates currentState);
