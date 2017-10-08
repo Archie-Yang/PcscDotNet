@@ -37,9 +37,11 @@ This interface declares the members that need to be implemented for accessing *P
 
 These are the methods declared with the same name of *PC/SC* functions currently:
 
+- `SCardBeginTransaction`
 - `SCardCancel`
 - `SCardConnect`
 - `SCardDisconnect`
+- `SCardEndTransaction`
 - `SCardEstablishContext`
 - `SCardFreeMemory`
 - `SCardGetStatusChange`

@@ -16,11 +16,15 @@ namespace PcscDotNet
 
         unsafe void ReadReaderState(void* pReaderStates, int index, out void* pReaderName, out SCardReaderStates currentState, out SCardReaderStates eventState, out byte[] atr);
 
+        SCardError SCardBeginTransaction(SCardHandle hCard);
+
         SCardError SCardCancel(SCardContext hContext);
 
         unsafe SCardError SCardConnect(SCardContext hContext, string szReader, SCardShare dwShareMode, SCardProtocols dwPreferredProtocols, SCardHandle* phCard, SCardProtocols* pdwActiveProtocol);
 
         SCardError SCardDisconnect(SCardHandle hCard, SCardDisposition dwDisposition);
+
+        SCardError SCardEndTransaction(SCardHandle hCard, SCardDisposition dwDisposition);
 
         unsafe SCardError SCardEstablishContext(SCardScope dwScope, void* pvReserved1, void* pvReserved2, SCardContext* phContext);
 

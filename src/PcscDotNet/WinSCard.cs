@@ -15,6 +15,9 @@ namespace PcscDotNet
         public const string DllName = "WinSCard.dll";
 
         [DllImport(DllName)]
+        public static extern SCardError SCardBeginTransaction(SCardHandle hCard);
+
+        [DllImport(DllName)]
         public static extern SCardError SCardCancel(SCardContext hContext);
 
         [DllImport(DllName, CharSet = CharSet.Unicode)]
@@ -22,6 +25,9 @@ namespace PcscDotNet
 
         [DllImport(DllName)]
         public static extern SCardError SCardDisconnect(SCardHandle hCard, SCardDisposition dwDisposition);
+
+        [DllImport(DllName)]
+        public static extern SCardError SCardEndTransaction(SCardHandle hCard, SCardDisposition dwDisposition);
 
         [DllImport(DllName)]
         public unsafe static extern SCardError SCardEstablishContext(SCardScope dwScope, void* pvReserved1, void* pvReserved2, SCardContext* phContext);
@@ -84,6 +90,11 @@ namespace PcscDotNet
             }
         }
 
+        SCardError IPcscProvider.SCardBeginTransaction(SCardHandle hCard)
+        {
+            return SCardBeginTransaction(hCard);
+        }
+
         SCardError IPcscProvider.SCardCancel(SCardContext hContext)
         {
             return SCardCancel(hContext);
@@ -97,6 +108,11 @@ namespace PcscDotNet
         SCardError IPcscProvider.SCardDisconnect(SCardHandle hCard, SCardDisposition dwDisposition)
         {
             return SCardDisconnect(hCard, dwDisposition);
+        }
+
+        SCardError IPcscProvider.SCardEndTransaction(SCardHandle hCard, SCardDisposition dwDisposition)
+        {
+            return SCardEndTransaction(hCard, dwDisposition);
         }
 
         unsafe SCardError IPcscProvider.SCardEstablishContext(SCardScope dwScope, void* pvReserved1, void* pvReserved2, SCardContext* phContext)
