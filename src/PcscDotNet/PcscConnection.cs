@@ -18,6 +18,8 @@ namespace PcscDotNet
 
         public string ReaderName { get; private set; }
 
+        public SCardShare ShareMode { get; private set; } = SCardShare.Undefined;
+
         public PcscConnection(PcscContext context, string readerName)
         {
             Provider = (Context = context).Provider;
@@ -35,6 +37,7 @@ namespace PcscDotNet
             SCardHandle handle;
             Provider.SCardConnect(Context.Handle, ReaderName, shareMode, protocols, &handle, &protocols).ThrowIfNotSuccess(onException);
             Handle = handle;
+            ShareMode = shareMode;
             Protocols = protocols;
             return this;
         }
@@ -58,6 +61,7 @@ namespace PcscDotNet
         {
             if (IsDisposed) throw new ObjectDisposedException(nameof(PcscConnection), nameof(Reconnect));
             Provider.SCardReconnect(Handle, shareMode, protocols, initializationDisposition, &protocols).ThrowIfNotSuccess(onException);
+            ShareMode = shareMode;
             Protocols = protocols;
             return this;
         }
@@ -67,6 +71,7 @@ namespace PcscDotNet
             if (!IsConnect) return;
             Provider.SCardDisconnect(Handle, disposition).ThrowIfNotSuccess(onException);
             Handle = SCardHandle.Default;
+            ShareMode = SCardShare.Undefined;
             Protocols = SCardProtocols.Undefined;
         }
     }
