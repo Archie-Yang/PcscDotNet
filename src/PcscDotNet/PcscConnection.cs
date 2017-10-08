@@ -31,6 +31,13 @@ namespace PcscDotNet
             Dispose();
         }
 
+        public PcscConnection BeginTransaction(PcscExceptionHandler onException = null)
+        {
+            if (IsDisposed) throw new ObjectDisposedException(nameof(PcscConnection), nameof(BeginTransaction));
+            Provider.SCardBeginTransaction(Handle).ThrowIfNotSuccess(onException);
+            return this;
+        }
+
         public unsafe PcscConnection Connect(SCardShare shareMode, SCardProtocols protocols, PcscExceptionHandler onException = null)
         {
             if (IsDisposed) throw new ObjectDisposedException(nameof(PcscConnection), nameof(Connect));
@@ -55,6 +62,13 @@ namespace PcscDotNet
             DisconnectInternal();
             IsDisposed = true;
             GC.SuppressFinalize(this);
+        }
+
+        public PcscConnection EndTransaction(SCardDisposition disposition = SCardDisposition.Leave, PcscExceptionHandler onException = null)
+        {
+            if (IsDisposed) throw new ObjectDisposedException(nameof(PcscConnection), nameof(EndTransaction));
+            Provider.SCardEndTransaction(Handle, disposition).ThrowIfNotSuccess(onException);
+            return this;
         }
 
         public unsafe PcscConnection Reconnect(SCardShare shareMode, SCardProtocols protocols, SCardDisposition initializationDisposition = SCardDisposition.Leave, PcscExceptionHandler onException = null)
