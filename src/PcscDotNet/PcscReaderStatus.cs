@@ -64,7 +64,7 @@ namespace PcscDotNet
                         var readerState = Items[i];
                         readerState.Atr = atr;
                         readerState.EventNumber = ((int)eventState >> 16) & 0x0000FFFF;
-                        readerState.States = eventState & (SCardReaderStates)0x0000FFFF;
+                        readerState.State = eventState & (SCardReaderStates)0x0000FFFF;
                         Provider.FreeString(pReaderName);
                     }
                 }

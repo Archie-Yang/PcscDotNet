@@ -8,7 +8,7 @@ namespace PcscDotNet
 
         public string ReaderName { get; private set; }
 
-        public SCardReaderStates States { get; internal set; }
+        public SCardReaderStates State { get; internal set; }
 
         public PcscReaderState(string readerName)
         {

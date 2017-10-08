@@ -53,6 +53,13 @@ namespace PcscDotNet
         [DllImport(DllName)]
         public static extern SCardError SCardReleaseContext(SCardContext hContext);
 
+        unsafe byte[] IPcscProvider.AllocateIORequest(ref int length)
+        {
+            length += sizeof(SCardIORequest);
+            length += (length % sizeof(void*));
+            return new byte[length];
+        }
+
         unsafe byte[] IPcscProvider.AllocateReaderStates(int count)
         {
             return new byte[count * sizeof(SCardReaderState)];
@@ -71,6 +78,22 @@ namespace PcscDotNet
         unsafe void IPcscProvider.FreeString(void* ptr)
         {
             Marshal.FreeHGlobal((IntPtr)ptr);
+        }
+
+        unsafe void IPcscProvider.ReadIORequest(void* pIORequest, out SCardProtocols protocol, out byte[] information)
+        {
+            var p = (SCardIORequest*)pIORequest;
+            protocol = p->Protocol;
+            var length = p->PciLength - sizeof(SCardIORequest);
+            if (length <= 0)
+            {
+                information = null;
+            }
+            else
+            {
+                information = new byte[length];
+                Marshal.Copy((IntPtr)(p + 1), information, 0, length);
+            }
         }
 
         unsafe void IPcscProvider.ReadReaderState(void* pReaderStates, int index, out void* pReaderName, out SCardReaderStates currentState, out SCardReaderStates eventState, out byte[] atr)
@@ -153,6 +176,17 @@ namespace PcscDotNet
         SCardError IPcscProvider.SCardReleaseContext(SCardContext hContext)
         {
             return SCardReleaseContext(hContext);
+        }
+
+        unsafe void IPcscProvider.WriteIORequest(void* pIORequest, SCardProtocols protocol, int length, byte[] information)
+        {
+            var p = (SCardIORequest*)pIORequest;
+            p->Protocol = protocol;
+            p->PciLength = length;
+            if (information.Length > 0)
+            {
+                Marshal.Copy(information, 0, (IntPtr)(p + 1), information.Length);
+            }
         }
 
         unsafe void IPcscProvider.WriteReaderState(void* pReaderStates, int index, SCardReaderStates currentState)

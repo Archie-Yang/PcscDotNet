@@ -12,7 +12,7 @@ namespace PcscDotNet
 
         public bool IsDisposed { get; private set; } = false;
 
-        public SCardProtocols Protocols { get; private set; } = SCardProtocols.Undefined;
+        public SCardProtocols Protocol { get; private set; } = SCardProtocols.Undefined;
 
         public IPcscProvider Provider { get; private set; }
 
@@ -38,14 +38,14 @@ namespace PcscDotNet
             return this;
         }
 
-        public unsafe PcscConnection Connect(SCardShare shareMode, SCardProtocols protocols, PcscExceptionHandler onException = null)
+        public unsafe PcscConnection Connect(SCardShare shareMode, SCardProtocols protocol, PcscExceptionHandler onException = null)
         {
             if (IsDisposed) throw new ObjectDisposedException(nameof(PcscConnection), nameof(Connect));
             SCardHandle handle;
-            Provider.SCardConnect(Context.Handle, ReaderName, shareMode, protocols, &handle, &protocols).ThrowIfNotSuccess(onException);
+            Provider.SCardConnect(Context.Handle, ReaderName, shareMode, protocol, &handle, &protocol).ThrowIfNotSuccess(onException);
             Handle = handle;
             ShareMode = shareMode;
-            Protocols = protocols;
+            Protocol = protocol;
             return this;
         }
 
@@ -71,12 +71,12 @@ namespace PcscDotNet
             return this;
         }
 
-        public unsafe PcscConnection Reconnect(SCardShare shareMode, SCardProtocols protocols, SCardDisposition initializationDisposition = SCardDisposition.Leave, PcscExceptionHandler onException = null)
+        public unsafe PcscConnection Reconnect(SCardShare shareMode, SCardProtocols protocol, SCardDisposition initializationDisposition = SCardDisposition.Leave, PcscExceptionHandler onException = null)
         {
             if (IsDisposed) throw new ObjectDisposedException(nameof(PcscConnection), nameof(Reconnect));
-            Provider.SCardReconnect(Handle, shareMode, protocols, initializationDisposition, &protocols).ThrowIfNotSuccess(onException);
+            Provider.SCardReconnect(Handle, shareMode, protocol, initializationDisposition, &protocol).ThrowIfNotSuccess(onException);
             ShareMode = shareMode;
-            Protocols = protocols;
+            Protocol = protocol;
             return this;
         }
 
@@ -86,7 +86,7 @@ namespace PcscDotNet
             Provider.SCardDisconnect(Handle, disposition).ThrowIfNotSuccess(onException);
             Handle = SCardHandle.Default;
             ShareMode = SCardShare.Undefined;
-            Protocols = SCardProtocols.Undefined;
+            Protocol = SCardProtocols.Undefined;
         }
     }
 }

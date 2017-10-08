@@ -6,6 +6,8 @@ namespace PcscDotNet
 {
     public interface IPcscProvider
     {
+        byte[] AllocateIORequest(ref int length);
+
         byte[] AllocateReaderStates(int count);
 
         unsafe void* AllocateString(string value);
@@ -13,6 +15,8 @@ namespace PcscDotNet
         unsafe string AllocateString(void* ptr, int length);
 
         unsafe void FreeString(void* ptr);
+
+        unsafe void ReadIORequest(void* pIORequest, out SCardProtocols protocol, out byte[] information);
 
         unsafe void ReadReaderState(void* pReaderStates, int index, out void* pReaderName, out SCardReaderStates currentState, out SCardReaderStates eventState, out byte[] atr);
 
@@ -41,6 +45,8 @@ namespace PcscDotNet
         unsafe SCardError SCardReconnect(SCardHandle hCard, SCardShare dwShareMode, SCardProtocols dwPreferredProtocols, SCardDisposition dwInitialization, SCardProtocols* pdwActiveProtocol);
 
         SCardError SCardReleaseContext(SCardContext hContext);
+
+        unsafe void WriteIORequest(void* pIORequest, SCardProtocols protocol, int length, byte[] information);
 
         unsafe void WriteReaderState(void* pReaderStates, int index, SCardReaderStates currentState);
 
