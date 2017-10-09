@@ -190,7 +190,7 @@ namespace PcscDotNet
             var p = (SCardIORequest*)pIORequest;
             p->Protocol = protocol;
             p->PciLength = totalLength;
-            if (information.Length > 0)
+            if (information?.Length > 0)
             {
                 Marshal.Copy(information, 0, (IntPtr)(p + 1), information.Length);
             }
