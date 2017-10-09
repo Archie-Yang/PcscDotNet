@@ -59,7 +59,8 @@ namespace PcscDotNet
         unsafe byte[] IPcscProvider.AllocateIORequest(int informationLength)
         {
             informationLength += sizeof(SCardIORequest);
-            return new byte[informationLength + (informationLength % sizeof(void*))];
+            var remain = informationLength % sizeof(void*);
+            return new byte[remain == 0 ? informationLength : informationLength + sizeof(SCardIORequest) - remain];
         }
 
         unsafe byte[] IPcscProvider.AllocateReaderStates(int count)
