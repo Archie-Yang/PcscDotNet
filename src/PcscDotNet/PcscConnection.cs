@@ -4,6 +4,10 @@ namespace PcscDotNet
 {
     public class PcscConnection : IDisposable
     {
+        public const int DefaultTransmitBufferSize = 256;
+
+        public const int ExtendedTransmitBufferSize = 65536;
+
         public PcscContext Context { get; private set; }
 
         public SCardHandle Handle { get; private set; }
@@ -19,6 +23,8 @@ namespace PcscDotNet
         public string ReaderName { get; private set; }
 
         public SCardShare ShareMode { get; private set; } = SCardShare.Undefined;
+
+        public int TransmitBufferSize { get; set; } = DefaultTransmitBufferSize;
 
         public PcscConnection(PcscContext context, string readerName)
         {
@@ -78,6 +84,77 @@ namespace PcscDotNet
             ShareMode = shareMode;
             Protocol = protocol;
             return this;
+        }
+
+        public unsafe byte[] Transmit(params byte[] send)
+        {
+            return Transmit(send, null, TransmitBufferSize);
+        }
+
+        public unsafe byte[] Transmit(byte[] send, PcscExceptionHandler onException = null)
+        {
+            return Transmit(send, null, TransmitBufferSize, onException);
+        }
+
+        public unsafe byte[] Transmit(byte[] send, int bufferSize, PcscExceptionHandler onException = null)
+        {
+            return Transmit(send, null, bufferSize, onException);
+        }
+
+        public unsafe byte[] Transmit(byte[] send, byte[] sendInformation, PcscExceptionHandler onException = null)
+        {
+            return Transmit(send, sendInformation, TransmitBufferSize, onException);
+        }
+
+        public unsafe byte[] Transmit(byte[] send, int recvInformationLength, out byte[] recvInformation, PcscExceptionHandler onException = null)
+        {
+            return Transmit(send, null, TransmitBufferSize, recvInformationLength, out recvInformation, onException);
+        }
+
+        public unsafe byte[] Transmit(byte[] send, int bufferSize, int recvInformationLength, out byte[] recvInformation, PcscExceptionHandler onException = null)
+        {
+            return Transmit(send, null, bufferSize, recvInformationLength, out recvInformation, onException);
+        }
+
+        public unsafe byte[] Transmit(byte[] send, byte[] sendInformation, int recvInformationLength, out byte[] recvInformation, PcscExceptionHandler onException = null)
+        {
+            return Transmit(send, sendInformation, TransmitBufferSize, recvInformationLength, out recvInformation, onException);
+        }
+
+        public unsafe byte[] Transmit(byte[] send, byte[] sendInformation, int bufferSize, PcscExceptionHandler onException = null)
+        {
+            if (IsDisposed) throw new ObjectDisposedException(nameof(PcscConnection), nameof(Transmit));
+            var recv = new byte[bufferSize];
+            var sendIORequest = Provider.AllocateIORequest(sendInformation?.Length ?? 0);
+            fixed (byte* fSend = send, fRecv = recv, fSendIORequest = sendIORequest)
+            {
+                var pSendIORequest = fSendIORequest;
+                Provider.WriteIORequest(pSendIORequest, Protocol, sendIORequest.Length, sendInformation);
+                Provider.SCardTransmit(Handle, pSendIORequest, fSend, send.Length, null, fRecv, &bufferSize).ThrowIfNotSuccess(onException);
+            }
+            Array.Resize(ref recv, bufferSize);
+            return recv;
+        }
+
+        public unsafe byte[] Transmit(byte[] send, byte[] sendInformation, int bufferSize, int recvInformationLength, out byte[] recvInformation, PcscExceptionHandler onException = null)
+        {
+            if (IsDisposed) throw new ObjectDisposedException(nameof(PcscConnection), nameof(Transmit));
+            var recv = new byte[bufferSize];
+            var sendIORequest = Provider.AllocateIORequest(sendInformation?.Length ?? 0);
+            var recvIORequest = Provider.AllocateIORequest(recvInformationLength);
+            fixed (byte* fSend = send, fRecv = recv, fSendIORequest = sendIORequest, fRecvIORequest = recvIORequest)
+            {
+                var pSendIORequest = fSendIORequest;
+                var pRecvIORequest = fRecvIORequest;
+                Provider.WriteIORequest(pSendIORequest, Protocol, sendIORequest.Length, sendInformation);
+                Provider.WriteIORequest(pRecvIORequest, SCardProtocols.Undefined, recvIORequest.Length, null);
+                Provider.SCardTransmit(Handle, pSendIORequest, fSend, send.Length, pRecvIORequest, fRecv, &bufferSize).ThrowIfNotSuccess(onException);
+                SCardProtocols protocol;
+                Provider.ReadIORequest(pRecvIORequest, out protocol, out recvInformation);
+                Protocol = protocol;
+            }
+            Array.Resize(ref recv, bufferSize);
+            return recv;
         }
 
         private void DisconnectInternal(SCardDisposition disposition = SCardDisposition.Leave, PcscExceptionHandler onException = null)
