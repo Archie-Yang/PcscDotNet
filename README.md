@@ -50,6 +50,7 @@ These are the methods declared with the same name of *PC/SC* functions currently
 - `SCardListReaders`
 - `SCardReconnect`
 - `SCardReleaseContext`
+- `SCardTransmit`
 
 Other methods:
 
