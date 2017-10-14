@@ -40,6 +40,7 @@ These are the methods declared with the same name of *PC/SC* functions currently
 - `SCardBeginTransaction`
 - `SCardCancel`
 - `SCardConnect`
+- `SCardControl`
 - `SCardDisconnect`
 - `SCardEndTransaction`
 - `SCardEstablishContext`
