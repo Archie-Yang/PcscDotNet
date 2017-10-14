@@ -13,7 +13,7 @@ namespace PcscDotNet
         public unsafe static string GetReaderGroupNames(IPcscProvider provider, SCardContext handle, PcscExceptionHandler onException)
         {
             byte* pGroupNames = null;
-            var charCount = PcscProvider.SCardAutoAllocate;
+            var charCount = SCardAutoAllocate;
             try
             {
                 provider.SCardListReaderGroups(handle, &pGroupNames, &charCount).ThrowIfNotSuccess(onException);
@@ -29,7 +29,7 @@ namespace PcscDotNet
         {
             string readerNames = null;
             byte* pReaderNames;
-            var charCount = PcscProvider.SCardAutoAllocate;
+            var charCount = SCardAutoAllocate;
             var err = provider.SCardListReaders(handle, group, &pReaderNames, &charCount);
             try
             {
