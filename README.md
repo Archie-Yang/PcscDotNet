@@ -73,15 +73,16 @@ Other methods:
 
 If you want to implement your provider using `WinSCard` or `pcsc-lite`, see the table below, it shows the different definitions between platforms:
 
-| Unmanaged Defined          | *        | `WinSCard` (*Windows*) | `pcsc-lite` (*OS X*) | `pcsc-lite` (*Linux*) |
-| -------------------------- | -------- | ---------------------- | -------------------- | --------------------- |
-| *ANSI* Characters          | Encoding | System Locale          | *UTF-8*              | *UTF-8*               |
-| *Unicode* Characters       | Encoding | *Unicode*              | -                    | -                     |
-| `SCARD_READERSTATE`        | Pack     | -                      | `1`                  | -                     |
-| `DWORD`                    | Size     | `4`                    | `4`                  | `sizeof(void*)`       |
-| `LONG`                     | Size     | `4`                    | `4`                  | `sizeof(void*)`       |
-| `SCARD_READERSTATE.rgbAtr` | Size     | `36`                   | `33`                 | `33`                  |
-| `SCARD_PROTOCOL_RAW`       | Value    | `0x00010000`           | `0x04`               | `0x04`                |
+| Unmanaged Defined          | *        | `WinSCard` (*Windows*)         | `pcsc-lite` (*OS X*) | `pcsc-lite` (*Linux*) |
+| -------------------------- | -------- | ------------------------------ | -------------------- | --------------------- |
+| `SCARD_CTL_CODE(code)`     | Define   | `0x00310000` `|` `(code << 2)` | `0x42000000 + code`  | `0x42000000 + code`   |
+| *ANSI* Characters          | Encoding | System Locale                  | *UTF-8*              | *UTF-8*               |
+| *Unicode* Characters       | Encoding | *Unicode*                      | -                    | -                     |
+| `SCARD_READERSTATE`        | Pack     | -                              | `1`                  | -                     |
+| `DWORD`                    | Size     | `4`                            | `4`                  | `sizeof(void*)`       |
+| `LONG`                     | Size     | `4`                            | `4`                  | `sizeof(void*)`       |
+| `SCARD_READERSTATE.rgbAtr` | Size     | `36`                           | `33`                 | `33`                  |
+| `SCARD_PROTOCOL_RAW`       | Value    | `0x00010000`                   | `0x04`               | `0x04`                |
 
 ### [Pcsc Class](src/PcscDotNet/Pcsc.cs "Go to Source")
 
