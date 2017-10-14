@@ -54,14 +54,20 @@ These are the methods declared with the same name of *PC/SC* functions currently
 
 Other methods:
 
+- `AllocateIORequest`
+  > Allocates managed byte array which mapped to unmanaged `SCARD_IO_REQUEST` structure.
 - `AllocateReaderStates`
   > Allocates managed byte array which mapped to unmanaged array of `SCARD_READERSTATE` structure.
 - `AllocateString`
-  > Allocates string in managed and unmanaged memory.
+  > Allocates string in managed or unmanaged memory.
 - `FreeString`
-  > Releases the unmanaged string allocated by `AllocateString`.
+  > Releases the unmanaged memory which allocated by `AllocateString`.
+- `ReadIORequest`
+  > Reads values from `SCARD_IO_REQUEST` which allocated by `AllocateIORequest` method.
 - `ReadReaderState`
   > Reads values from the specific index of the `SCARD_READERSTATE` array which allocated by `AllocateReaderStates` method.
+- `WriteIORequest`
+  > Writes values to `SCARD_IO_REQUEST` which allocated by `AllocateIORequest` method.
 - `WriteReaderState`
   > Writes values to the specific index of the `SCARD_READERSTATE` array which allocated by `AllocateReaderStates` method.
 
