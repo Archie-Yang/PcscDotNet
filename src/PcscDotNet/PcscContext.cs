@@ -60,7 +60,7 @@ namespace PcscDotNet
         public IEnumerable<string> GetReaderGroupNames(PcscExceptionHandler onException = null)
         {
             if (IsDisposed) throw new ObjectDisposedException(nameof(PcscContext), nameof(GetReaderGroupNames));
-            var groupNames = PcscProvider.GetReaderGroupNames(Provider, Handle, onException);
+            var groupNames = Provider.GetReaderGroupNames(Handle, onException);
             if (groupNames == null) yield break;
             for (int offset = 0, offsetNull, length = groupNames.Length; ;)
             {
@@ -78,7 +78,7 @@ namespace PcscDotNet
         public IEnumerable<string> GetReaderNames(string group, PcscExceptionHandler onException = null)
         {
             if (IsDisposed) throw new ObjectDisposedException(nameof(PcscContext), nameof(GetReaderNames));
-            var readerNames = PcscProvider.GetReaderNames(Provider, Handle, group, onException);
+            var readerNames = Provider.GetReaderNames(Handle, group, onException);
             if (readerNames == null) yield break;
             for (int offset = 0, offsetNull, length = readerNames.Length; ;)
             {

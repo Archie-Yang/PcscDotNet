@@ -24,7 +24,7 @@ namespace PcscDotNet
 
         public IEnumerable<string> GetReaderGroupNames(PcscExceptionHandler onException = null)
         {
-            var groupNames = PcscProvider.GetReaderGroupNames(Provider, SCardContext.Default, onException);
+            var groupNames = Provider.GetReaderGroupNames(SCardContext.Default, onException);
             if (groupNames == null) yield break;
             for (int offset = 0, offsetNull, length = groupNames.Length; ;)
             {
@@ -41,7 +41,7 @@ namespace PcscDotNet
 
         public IEnumerable<string> GetReaderNames(string group, PcscExceptionHandler onException = null)
         {
-            var readerNames = PcscProvider.GetReaderNames(Provider, SCardContext.Default, group, onException);
+            var readerNames = Provider.GetReaderNames(SCardContext.Default, group, onException);
             if (readerNames == null) yield break;
             for (int offset = 0, offsetNull, length = readerNames.Length; ;)
             {
