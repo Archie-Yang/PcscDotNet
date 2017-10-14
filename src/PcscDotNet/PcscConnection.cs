@@ -34,7 +34,7 @@ namespace PcscDotNet
 
         ~PcscConnection()
         {
-            Dispose();
+            Dispose(false);
         }
 
         public PcscConnection BeginTransaction(PcscExceptionHandler onException = null)
@@ -64,10 +64,7 @@ namespace PcscDotNet
 
         public void Dispose()
         {
-            if (IsDisposed) return;
-            DisconnectInternal();
-            IsDisposed = true;
-            GC.SuppressFinalize(this);
+            Dispose(true);
         }
 
         public PcscConnection EndTransaction(SCardDisposition disposition = SCardDisposition.Leave, PcscExceptionHandler onException = null)
@@ -164,6 +161,16 @@ namespace PcscDotNet
             Handle = SCardHandle.Default;
             ShareMode = SCardShare.Undefined;
             Protocol = SCardProtocols.Undefined;
+        }
+
+        private void Dispose(bool isSuppressFinalize)
+        {
+            if (!IsDisposed)
+            {
+                DisconnectInternal();
+                IsDisposed = true;
+            }
+            if (isSuppressFinalize) GC.SuppressFinalize(this);
         }
     }
 }

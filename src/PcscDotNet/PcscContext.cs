@@ -20,7 +20,7 @@ namespace PcscDotNet
 
         ~PcscContext()
         {
-            Dispose();
+            Dispose(false);
         }
 
         public void Cancel(PcscExceptionHandler onException = null)
@@ -41,10 +41,7 @@ namespace PcscDotNet
 
         public void Dispose()
         {
-            if (IsDisposed) return;
-            ReleaseInternal();
-            IsDisposed = true;
-            GC.SuppressFinalize(this);
+            Dispose(true);
         }
 
         public unsafe PcscContext Establish(SCardScope scope, PcscExceptionHandler onException = null)
@@ -110,6 +107,16 @@ namespace PcscDotNet
             if (IsDisposed) throw new ObjectDisposedException(nameof(PcscContext), nameof(Validate));
             Provider.SCardIsValidContext(Handle).ThrowIfNotSuccess(onException);
             return this;
+        }
+
+        private void Dispose(bool isSuppressFinalize)
+        {
+            if (!IsDisposed)
+            {
+                ReleaseInternal();
+                IsDisposed = true;
+            }
+            if (isSuppressFinalize) GC.SuppressFinalize(this);
         }
 
         private void ReleaseInternal(PcscExceptionHandler onException = null)
