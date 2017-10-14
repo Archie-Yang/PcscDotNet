@@ -51,7 +51,7 @@ namespace PcscDotNet
                 {
                     for (var i = 0; i < Count; ++i)
                     {
-                        Provider.WriteReaderState(pReaderStates, i, (void*)Provider.AllocateString(Items[i].ReaderName));
+                        Provider.WriteReaderState(pReaderStates, i, Provider.AllocateString(Items[i].ReaderName));
                     }
                     Provider.SCardGetStatusChange(Context.Handle, timeout, pReaderStates, Count).ThrowIfNotSuccess(onException);
                 }
