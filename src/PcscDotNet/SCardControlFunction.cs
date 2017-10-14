@@ -3,9 +3,9 @@ using System;
 namespace PcscDotNet
 {
     /// <summary>
-    /// Reader action I/O control codes.
+    /// Reader action I/O functions.
     /// </summary>
-    public enum SCardControlCode
+    public enum SCardControlFunction
     {
         /// <summary>
         /// IOCTL_CCID_ESCAPE.

@@ -24,6 +24,8 @@ namespace PcscDotNet
 
         unsafe SCardError SCardControl(SCardHandle hCard, int dwControlCode, void* lpInBuffer, int nInBufferSize, void* lpOutBuffer, int nOutBufferSize, int* lpBytesReturned);
 
+        int SCardCtlCode(SCardControlFunction code);
+
         SCardError SCardDisconnect(SCardHandle hCard, SCardDisposition dwDisposition);
 
         SCardError SCardEndTransaction(SCardHandle hCard, SCardDisposition dwDisposition);

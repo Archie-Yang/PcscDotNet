@@ -67,6 +67,8 @@ Other methods:
   > Reads values from `SCARD_IO_REQUEST` which allocated by `AllocateIORequest` method.
 - `ReadReaderState`
   > Reads values from the specific index of the `SCARD_READERSTATE` array which allocated by `AllocateReaderStates` method.
+- `SCardCtlCode`
+  > Gets reader action I/O control codes.
 - `WriteIORequest`
   > Writes values to `SCARD_IO_REQUEST` which allocated by `AllocateIORequest` method.
 - `WriteReaderState`

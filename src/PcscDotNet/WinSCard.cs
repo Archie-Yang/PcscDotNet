@@ -138,6 +138,11 @@ namespace PcscDotNet
             return SCardControl(hCard, dwControlCode, lpInBuffer, nInBufferSize, lpOutBuffer, nOutBufferSize, lpBytesReturned);
         }
 
+        int IPcscProvider.SCardCtlCode(SCardControlFunction code)
+        {
+            return 0x00310000 | ((int)code << 2);
+        }
+
         SCardError IPcscProvider.SCardDisconnect(SCardHandle hCard, SCardDisposition dwDisposition)
         {
             return SCardDisconnect(hCard, dwDisposition);
