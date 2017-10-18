@@ -4,11 +4,15 @@ namespace PcscDotNet
 {
     public class PcscConnection : IDisposable
     {
+        public const int DefaultControlBufferSize = 256;
+
         public const int DefaultTransmitBufferSize = 256;
 
         public const int ExtendedTransmitBufferSize = 65536;
 
         public PcscContext Context { get; private set; }
+
+        public int ControlBufferSize { get; set; } = DefaultControlBufferSize;
 
         public SCardHandle Handle { get; private set; }
 
@@ -53,6 +57,71 @@ namespace PcscDotNet
             ShareMode = shareMode;
             Protocol = protocol;
             return this;
+        }
+
+        public byte[] Control(int code, params byte[] send)
+        {
+            return Control(code, send, ControlBufferSize);
+        }
+
+        public byte[] Control(int code, byte[] send, PcscExceptionHandler onException = null)
+        {
+            return Control(code, send, ControlBufferSize, onException);
+        }
+
+        public unsafe byte[] Control(int code, byte[] send, int bufferSize, PcscExceptionHandler onException = null)
+        {
+            if (bufferSize <= 0)
+            {
+                if (send == null)
+                {
+                    Provider.SCardControl(Handle, code, null, 0, null, 0, &bufferSize).ThrowIfNotSuccess(onException);
+                }
+                else
+                {
+                    fixed (byte* fSend = send)
+                    {
+                        Provider.SCardControl(Handle, code, fSend, send.Length, null, 0, &bufferSize).ThrowIfNotSuccess(onException);
+                    }
+                }
+                return new byte[0];
+            }
+            else
+            {
+                var recv = new byte[bufferSize];
+                fixed (byte* fRecv = recv)
+                {
+                    if (send == null)
+                    {
+                        Provider.SCardControl(Handle, code, null, 0, fRecv, bufferSize, &bufferSize).ThrowIfNotSuccess(onException);
+                    }
+                    else
+                    {
+                        fixed (byte* fSend = send)
+                        {
+                            Provider.SCardControl(Handle, code, fSend, send.Length, fRecv, bufferSize, &bufferSize).ThrowIfNotSuccess(onException);
+                        }
+                    }
+                }
+                if (bufferSize <= 0) return new byte[0];
+                Array.Resize(ref recv, bufferSize);
+                return recv;
+            }
+        }
+
+        public byte[] Control(SCardControlFunction function, params byte[] send)
+        {
+            return Control(Provider.SCardCtlCode(function), send, ControlBufferSize);
+        }
+
+        public byte[] Control(SCardControlFunction function, byte[] send, PcscExceptionHandler onException = null)
+        {
+            return Control(Provider.SCardCtlCode(function), send, ControlBufferSize, onException);
+        }
+
+        public byte[] Control(SCardControlFunction function, byte[] send, int bufferSize, PcscExceptionHandler onException = null)
+        {
+            return Control(Provider.SCardCtlCode(function), send, bufferSize, onException);
         }
 
         public PcscConnection Disconnect(SCardDisposition disposition = SCardDisposition.Leave, PcscExceptionHandler onException = null)
