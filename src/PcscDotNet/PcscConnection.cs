@@ -71,6 +71,7 @@ namespace PcscDotNet
 
         public unsafe byte[] Control(int code, byte[] send, int bufferSize, PcscExceptionHandler onException = null)
         {
+            if (IsDisposed) throw new ObjectDisposedException(nameof(PcscConnection), nameof(Control));
             if (bufferSize <= 0)
             {
                 if (send == null)
